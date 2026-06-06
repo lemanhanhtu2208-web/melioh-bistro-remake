@@ -112,6 +112,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   padding: var(--section-y) var(--gut);
 }
 .band { max-width: 44rem; margin-bottom: clamp(2.5rem, 6vw, 4.5rem); }
+.band__note { font-family: var(--serif); font-style: italic; color: var(--gold); font-size: 1.2rem; margin-top: 1rem; }
 
 /* Shared media wrapper (overflow + hover zoom) */
 .media { overflow: hidden; border-radius: 3px; }
@@ -176,7 +177,17 @@ html:not(.js) .preloader { opacity: 0; visibility: hidden; pointer-events: none;
   box-shadow: 0 1px 0 var(--line-soft);
 }
 
-.logo { display: inline-flex; align-items: baseline; gap: 0.4rem; color: var(--text); }
+.logo { display: inline-flex; align-items: center; gap: 0.7rem; color: var(--text); }
+.logo__mark {
+  width: 48px; height: 48px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+  background: #160f0a; box-shadow: 0 0 0 1px var(--line);
+}
+.logo__word {
+  font-family: var(--serif); font-weight: 500; font-size: 1.04rem;
+  letter-spacing: 0.16em; text-transform: uppercase; line-height: 1.1; color: var(--text);
+}
+.logo__loc { color: var(--gold); }
+/* footer keeps the text wordmark */
 .logo__name { font-family: var(--serif); font-weight: 600; font-size: 1.5rem; letter-spacing: 0.01em; }
 .logo__tag { font-family: var(--sans); font-weight: 400; font-size: 0.66rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); }
 
@@ -218,15 +229,18 @@ html:not(.js) .preloader { opacity: 0; visibility: hidden; pointer-events: none;
 }
 .hero__content { max-width: 40rem; }
 .hero__title {
-  font-family: var(--serif); font-weight: 500; line-height: 1.0;
-  letter-spacing: -0.015em;
-  font-size: clamp(3rem, 10vw, 7.5rem);
+  font-family: var(--serif); font-weight: 500; line-height: 1.08;
+  letter-spacing: -0.01em;
+  font-size: clamp(2.5rem, 7.4vw, 6.2rem);
   text-shadow: 0 2px 40px rgba(15,11,8,0.5);
 }
-.hero__title em { font-style: italic; font-weight: 400; color: var(--gold); }
+.hero__title em {
+  display: block; font-style: italic; font-weight: 400; color: var(--gold);
+  font-size: 0.66em; line-height: 1.2; margin-top: 0.18em;
+}
 .hero__sub {
-  margin: 1.6rem 0 2.4rem; max-width: 32rem;
-  font-size: clamp(1rem, 1.4vw, 1.15rem); color: rgba(246,239,231,0.85);
+  margin: 1.7rem 0 2.4rem; max-width: 520px; line-height: 1.65;
+  font-size: clamp(1rem, 1.3vw, 1.12rem); color: rgba(246,239,231,0.82);
 }
 .hero__actions { display: flex; flex-wrap: wrap; gap: 1rem; }
 .hero__trust {
@@ -234,11 +248,10 @@ html:not(.js) .preloader { opacity: 0; visibility: hidden; pointer-events: none;
   color: var(--gold); opacity: 0.92;
 }
 .hero__foot {
-  position: absolute; left: var(--gut); right: var(--gut); bottom: 1.8rem;
-  display: flex; justify-content: space-between; gap: 1rem;
-  font-size: 0.68rem; letter-spacing: 0.24em; text-transform: uppercase;
-  color: rgba(246,239,231,0.7);
-  border-top: 1px solid var(--line-soft); padding-top: 1.2rem;
+  position: absolute; right: var(--gut); bottom: 1.6rem;
+  display: flex; justify-content: flex-end;
+  font-size: 0.6rem; letter-spacing: 0.26em; text-transform: uppercase;
+  color: rgba(246,239,231,0.55);
 }
 
 /* ---------- Our Story ---------- */
@@ -562,6 +575,9 @@ html.js .hero__content.reveal { transition-delay: 0.15s; }
 @media (max-width: 720px) {
   .header__cta { display: none; }
   .burger { display: block; }
+  .logo__mark { width: 42px; height: 42px; }
+  .logo__word { font-size: 0.86rem; letter-spacing: 0.1em; }
+  .logo__loc { display: none; }
   .nav {
     position: fixed; inset: 0; background: rgba(15,11,8,0.97);
     backdrop-filter: blur(8px);
