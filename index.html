@@ -20,6 +20,27 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Set the GSAP-ready flag before first paint so cinematic entrances
+       don't flash. main.js removes it again if GSAP fails to load.
+       Safety net: if the motion script never initializes (CDN blocked,
+       JS disabled, preview proxy, any error) the content is revealed
+       automatically so the page is never left hidden/blank. -->
+  <script>
+    (function () {
+      try {
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        document.documentElement.classList.add("has-gsap");
+        window.setTimeout(function () {
+          if (!window.__meliohMotionReady) {
+            document.documentElement.classList.remove("has-gsap");
+          }
+        }, 2500);
+      } catch (e) {
+        document.documentElement.classList.remove("has-gsap");
+      }
+    })();
+  </script>
 </head>
 <body>
 
@@ -62,9 +83,12 @@
         <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=2000&q=80" alt="Candlelit dining table set for two by the Han River at dusk" />
       </div>
       <div class="hero__veil"></div>
-      <div class="hero__content reveal">
+      <div class="hero__content">
         <p class="hero__eyebrow">Da Nang · By the Han River</p>
-        <h1 class="hero__title">The Nest of Love<br /><em>by Han River</em></h1>
+        <h1 class="hero__title">
+          <span class="hero__line"><span>The Nest of Love</span></span>
+          <span class="hero__line"><span><em>by Han River</em></span></span>
+        </h1>
         <p class="hero__sub">Romantic dining, candlelight moments and unforgettable celebrations for two.</p>
         <div class="hero__actions">
           <a href="#reservation" class="btn btn--solid">Book a Table</a>
@@ -97,63 +121,66 @@
       </div>
     </section>
 
-    <!-- Experience -->
+    <!-- Experience — sticky storytelling -->
     <section class="experience section" id="experience">
-      <div class="section__head reveal">
-        <p class="eyebrow">Why MeliOh</p>
-        <h2 class="display">Evenings made for two.</h2>
-      </div>
+      <div class="exp__layout">
+        <aside class="exp__aside">
+          <p class="eyebrow">Why MeliOh</p>
+          <h2 class="display">Moments worth<br /><em>remembering.</em></h2>
+          <p class="exp__aside-text">Five ways to spend an evening with us, each one set quietly in advance so you can simply arrive, sit close and let the night unfold.</p>
+        </aside>
 
-      <div class="exp">
-        <article class="exp__row reveal">
-          <div class="exp__media"><img src="https://images.unsplash.com/photo-1559329007-40df8a9345d8?auto=format&fit=crop&w=1100&q=80" alt="Couple sharing a candlelit dinner" /></div>
-          <div class="exp__text">
-            <span class="exp__num">I</span>
-            <h3>Date Night</h3>
-            <p>Soft candlelight, a quiet table and a fusion menu meant to be lingered over. The kind of evening you do not want to end.</p>
-            <a href="#reservation" class="link">Make an inquiry</a>
-          </div>
-        </article>
+        <div class="exp__items">
+          <article class="exp__item" data-exp>
+            <div class="exp__item-media"><img src="https://images.unsplash.com/photo-1559329007-40df8a9345d8?auto=format&fit=crop&w=1100&q=80" alt="Couple sharing a candlelit dinner" /></div>
+            <div class="exp__item-body">
+              <span class="exp__num">I</span>
+              <h3>Date Night</h3>
+              <p>Soft candlelight, a quiet table and a fusion menu meant to be lingered over. The kind of evening you do not want to end.</p>
+              <a href="#reservation" class="link">Make an inquiry</a>
+            </div>
+          </article>
 
-        <article class="exp__row exp__row--flip reveal">
-          <div class="exp__media"><img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1100&q=80" alt="Anniversary table with flowers and candles" /></div>
-          <div class="exp__text">
-            <span class="exp__num">II</span>
-            <h3>Anniversary Dinner</h3>
-            <p>We set the scene with a banner, candles and a flower pot, so all you have to do is arrive and celebrate the years together.</p>
-            <a href="#reservation" class="link">Make an inquiry</a>
-          </div>
-        </article>
+          <article class="exp__item" data-exp>
+            <div class="exp__item-media"><img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1100&q=80" alt="Anniversary table with flowers and candles" /></div>
+            <div class="exp__item-body">
+              <span class="exp__num">II</span>
+              <h3>Anniversary Dinner</h3>
+              <p>We set the scene with a banner, candles and a flower pot, so all you have to do is arrive and celebrate the years together.</p>
+              <a href="#reservation" class="link">Make an inquiry</a>
+            </div>
+          </article>
 
-        <article class="exp__row reveal">
-          <div class="exp__media"><img src="https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=1100&q=80" alt="Birthday celebration table setting" /></div>
-          <div class="exp__text">
-            <span class="exp__num">III</span>
-            <h3>Birthday Celebration</h3>
-            <p>A Happy Birthday banner, warm light and a dessert moment to remember, arranged for the two of you ahead of time.</p>
-            <a href="#reservation" class="link">Make an inquiry</a>
-          </div>
-        </article>
+          <article class="exp__item" data-exp>
+            <div class="exp__item-media"><img src="https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=1100&q=80" alt="Birthday celebration table setting" /></div>
+            <div class="exp__item-body">
+              <span class="exp__num">III</span>
+              <h3>Birthday Celebration</h3>
+              <p>A Happy Birthday banner, warm light and a dessert moment to remember, arranged for the two of you ahead of time.</p>
+              <a href="#reservation" class="link">Make an inquiry</a>
+            </div>
+          </article>
 
-        <article class="exp__row exp__row--flip reveal">
-          <div class="exp__media"><img src="https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&w=1100&q=80" alt="Romantic proposal setup with roses at night" /></div>
-          <div class="exp__text">
-            <span class="exp__num">IV</span>
-            <h3>Proposal Moment</h3>
-            <p>Flowers, a "Will you marry me?" light and a private corner above the city. We help you capture the yes on your own phone.</p>
-            <a href="#reservation" class="link">Make an inquiry</a>
-          </div>
-        </article>
+          <article class="exp__item" data-exp>
+            <div class="exp__item-media"><img src="https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&w=1100&q=80" alt="Romantic proposal setup with roses at night" /></div>
+            <div class="exp__item-body">
+              <span class="exp__num">IV</span>
+              <h3>Proposal Moment</h3>
+              <p>Flowers, a "Will you marry me?" light and a private corner above the city. We help you capture the yes on your own phone.</p>
+              <a href="#reservation" class="link">Make an inquiry</a>
+            </div>
+          </article>
 
-        <article class="exp__row reveal">
-          <div class="exp__media"><img src="https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?auto=format&fit=crop&w=1100&q=80" alt="Rooftop dining with city bridge view at night" /></div>
-          <div class="exp__text">
-            <span class="exp__num">V</span>
-            <h3>Private Top Floor Party</h3>
-            <p>An open-air third floor facing the Tran Thi Ly Bridge, reserved for your gathering. Book at least two days ahead.</p>
-            <a href="#reservation" class="link">Make an inquiry</a>
-          </div>
-        </article>
+          <article class="exp__item" data-exp>
+            <div class="exp__item-media"><img src="https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?auto=format&fit=crop&w=1100&q=80" alt="Rooftop dining with city bridge view at night" /></div>
+            <div class="exp__item-body">
+              <span class="exp__num">V</span>
+              <h3>Private Top Floor Party</h3>
+              <p>An open-air third floor facing the Tran Thi Ly Bridge, reserved for your gathering. Book at least two days ahead.</p>
+              <a href="#reservation" class="link">Make an inquiry</a>
+            </div>
+          </article>
+        </div>
       </div>
     </section>
 
@@ -521,6 +548,10 @@
     <a href="#reservation" class="dock__cta" aria-label="Book a table">Book</a>
   </div>
 
-  <script src="main.js"></script>
+  <!-- Motion libraries (GSAP + ScrollTrigger + Lenis smooth scroll) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js" defer></script>
+  <script src="main.js" defer></script>
 </body>
 </html>

@@ -130,25 +130,58 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 /* ---------- Preloader ---------- */
 .preloader {
   position: fixed; inset: 0; z-index: 9999;
-  background: var(--wine);
+  background:
+    radial-gradient(circle at 50% 45%, rgba(200, 161, 90, 0.14), transparent 24%),
+    radial-gradient(circle at 50% 100%, rgba(30, 20, 20, 0.5), transparent 45%),
+    linear-gradient(180deg, #141010 0%, #111111 100%);
   display: grid; place-items: center;
+  overflow: hidden;
   transition: opacity 0.7s var(--ease), visibility 0.7s;
 }
+/* warm candlelight glow + soft corner vignette */
+.preloader::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(232, 207, 168, 0.10), transparent 38%),
+    radial-gradient(120% 90% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+  animation: candle 4.5s var(--ease) infinite alternate;
+}
+/* very subtle grain/noise so the background never reads flat */
+.preloader::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  opacity: 0.05; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
 .preloader.is-done { opacity: 0; visibility: hidden; }
-.preloader__inner { text-align: center; color: var(--cream); }
+.preloader__inner { position: relative; z-index: 1; text-align: center; }
 .preloader__name {
   display: block; font-family: var(--serif); font-style: italic;
   font-size: clamp(2rem, 6vw, 3.2rem); letter-spacing: 0.02em;
+  color: #F3E9DF;
+  text-shadow: 0 0 28px rgba(200, 161, 90, 0.18);
+  opacity: 0; transform: translateY(14px);
+  animation: nameIn 0.9s var(--ease) 0.15s forwards;
 }
 .preloader__line {
-  display: block; height: 1px; background: var(--gold);
-  width: 0; margin: 1.1rem auto; animation: line 1.4s var(--ease) forwards;
+  display: block; height: 1px; background: #C8A15A;
+  width: 0; margin: 1.1rem auto;
+  box-shadow: 0 0 10px rgba(200, 161, 90, 0.35);
+  animation: line 1s var(--ease) 0.85s forwards;
 }
 .preloader__sub {
-  font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase;
-  color: var(--champagne);
+  display: block;
+  font-size: 0.72rem; letter-spacing: 0.34em; text-transform: uppercase;
+  color: #C8A15A;
+  opacity: 0;
+  animation: subIn 0.8s var(--ease) 1.5s forwards;
 }
+@keyframes nameIn { to { opacity: 1; transform: translateY(0); } }
+@keyframes subIn { to { opacity: 0.85; } }
 @keyframes line { to { width: 180px; } }
+@keyframes candle {
+  0% { opacity: 0.85; }
+  100% { opacity: 1; }
+}
 
 /* ---------- Header ---------- */
 .header {
@@ -224,6 +257,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   text-shadow: 0 2px 30px rgba(22,19,19,0.3);
 }
 .hero__title em { font-style: italic; font-weight: 400; color: var(--champagne); }
+.hero__line { display: block; overflow: hidden; padding-bottom: 0.04em; }
+.hero__line > span { display: block; }
 .hero__sub {
   margin: 1.6rem 0 2.4rem; max-width: 34rem;
   font-size: clamp(1rem, 1.4vw, 1.15rem); color: rgba(248,239,227,0.92);
@@ -256,29 +291,40 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   font-size: 1.05rem; min-width: 1.6rem;
 }
 
-/* ---------- Experience ---------- */
-.experience { background: var(--cream); }
-.exp { display: flex; flex-direction: column; gap: clamp(3rem, 8vw, 6rem); }
-.exp__row {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: clamp(1.5rem, 5vw, 4.5rem); align-items: center;
+/* ---------- Experience — sticky storytelling ---------- */
+.experience {
+  background: var(--cream);
+  transition: background-color 1.2s var(--ease);
 }
-.exp__row--flip .exp__media { order: 2; }
-.exp__media { overflow: hidden; border-radius: 2px; }
-.exp__media img {
-  width: 100%; aspect-ratio: 5 / 4; object-fit: cover;
-  transition: transform 0.9s var(--ease);
+.exp__layout {
+  display: grid; grid-template-columns: 0.85fr 1.15fr;
+  gap: clamp(2rem, 6vw, 5.5rem); align-items: start;
 }
-.exp__row:hover .exp__media img { transform: scale(1.04); }
+.exp__aside {
+  position: sticky; top: clamp(6rem, 16vh, 11rem);
+}
+.exp__aside-text {
+  color: rgba(33,26,24,0.78); margin-top: 1.4rem; max-width: 26rem;
+}
+.exp__items {
+  display: flex; flex-direction: column; gap: clamp(3.5rem, 9vw, 7rem);
+}
+.exp__item-media { overflow: hidden; border-radius: 2px; margin-bottom: 1.6rem; }
+.exp__item-media img {
+  width: 100%; aspect-ratio: 16 / 10; object-fit: cover;
+  transition: transform 1.1s var(--ease);
+  will-change: transform;
+}
+.exp__item:hover .exp__item-media img { transform: scale(1.05); }
 .exp__num {
   font-family: var(--serif); font-style: italic; font-size: 1.6rem; color: var(--gold);
-  display: block; margin-bottom: 0.6rem;
+  display: block; margin-bottom: 0.5rem;
 }
-.exp__text h3 {
+.exp__item-body h3 {
   font-family: var(--serif); font-weight: 500; font-size: clamp(1.8rem, 3.5vw, 2.6rem);
   color: var(--wine); line-height: 1.1; margin-bottom: 0.9rem;
 }
-.exp__text p { color: rgba(33,26,24,0.82); max-width: 32rem; margin-bottom: 1.4rem; }
+.exp__item-body p { color: rgba(33,26,24,0.82); max-width: 34rem; margin-bottom: 1.4rem; }
 
 /* ---------- Services / Accordion ---------- */
 .services { background: var(--cream-2); }
@@ -464,17 +510,87 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 /* ---------- Floating dock (mobile) ---------- */
 .dock { display: none; }
 
-/* ---------- Reveal animation ---------- */
+/* ---------- Reveal animation (no-JS / fallback) ---------- */
 .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.9s var(--ease), transform 0.9s var(--ease); }
 .reveal.is-in { opacity: 1; transform: none; }
+
+/* ============================================================
+   GSAP cinematic motion
+   When GSAP is active, JS controls the timing. We only set the
+   *initial* hidden states here so there is no flash before the
+   scripts run, then GSAP animates to the natural state.
+   ============================================================ */
+
+/* Hero entrance — initial states (GSAP only) */
+.has-gsap .hero__eyebrow,
+.has-gsap .hero__sub,
+.has-gsap .hero__actions,
+.has-gsap .hero__foot { opacity: 0; }
+.has-gsap .hero__line > span { transform: translateY(110%); }
+.has-gsap .hero__media img { transform: scale(1.08); }
+.has-gsap .header { opacity: 0; }
+
+/* Generic reveals are handled by GSAP, so neutralise the CSS reveal
+   transition to avoid double-animating. JS sets the hidden state. */
+.has-gsap .reveal { transition: none; }
+
+/* Clip-path image wipe (champagne-soft, left to right) */
+.has-gsap [data-img-wipe] { clip-path: inset(0 100% 0 0); }
+
+/* Proposal packages — premium hover interaction */
+.pkg {
+  position: relative;
+  transition: background-color 0.5s var(--ease), box-shadow 0.5s var(--ease);
+}
+.pkg::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  border: 1px solid transparent; border-radius: 2px;
+  transition: border-color 0.5s var(--ease), box-shadow 0.5s var(--ease);
+}
+.pkg:hover {
+  background: rgba(248, 239, 227, 0.06);
+  z-index: 2;
+}
+.pkg:hover::after {
+  border-color: rgba(200, 161, 90, 0.55);
+  box-shadow: 0 0 28px rgba(200, 161, 90, 0.16), inset 0 0 22px rgba(200, 161, 90, 0.06);
+}
+.pkg h3, .pkg__desc { transition: color 0.5s var(--ease); }
+.pkg:hover h3 { color: #fff; }
+.pkg:hover .pkg__desc { color: rgba(248, 239, 227, 0.95); }
+
+/* Reservation — invitation card glow */
+.reservation .form {
+  position: relative;
+  border-radius: 2px;
+}
+.reservation .form::before {
+  content: ""; position: absolute; inset: -8% -4%; z-index: -1; pointer-events: none;
+  background: radial-gradient(60% 50% at 50% 0%, rgba(200, 161, 90, 0.14), transparent 70%);
+  opacity: 0; transition: opacity 1s var(--ease);
+}
+.reservation .form.is-in::before,
+.has-gsap .reservation .form.is-shown::before { opacity: 1; }
+
+/* Form success state — soft, in-card confirmation (no raw alert) */
+.form__status { margin-top: 1rem; font-size: 0.88rem; min-height: 1.2rem; }
+.form__status.is-ok {
+  color: var(--rose);
+  font-family: var(--serif); font-style: italic; font-size: 1.15rem; line-height: 1.4;
+  padding: 1rem 1.2rem; margin-top: 1.2rem;
+  background: rgba(200, 161, 90, 0.09);
+  border: 1px solid rgba(200, 161, 90, 0.3); border-radius: 2px;
+  animation: statusIn 0.7s var(--ease) both;
+}
+@keyframes statusIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 
 /* ============================================================
    Responsive
    ============================================================ */
 @media (max-width: 980px) {
   .about__grid, .menu__grid, .reservation__grid, .contact__grid, .newsletter__inner { grid-template-columns: 1fr; }
-  .exp__row, .exp__row--flip { grid-template-columns: 1fr; gap: 1.5rem; }
-  .exp__row--flip .exp__media { order: 0; }
+  .exp__layout { grid-template-columns: 1fr; gap: clamp(2rem, 6vw, 3rem); }
+  .exp__aside { position: static; top: auto; margin-bottom: 1rem; }
   .packages { grid-template-columns: 1fr; }
   .pkg { border-left: none; border-top: 1px solid var(--line-light); }
   .pkg:first-child { border-top: none; }
