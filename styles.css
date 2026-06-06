@@ -213,10 +213,10 @@ html:not(.js) .preloader { opacity: 0; visibility: hidden; pointer-events: none;
 .hero__veil {
   position: absolute; inset: 0; z-index: -1;
   background:
-    linear-gradient(180deg, rgba(15,11,8,0.55) 0%, rgba(15,11,8,0.25) 35%, rgba(15,11,8,0.55) 75%, rgba(15,11,8,0.92) 100%),
-    radial-gradient(80% 60% at 50% 40%, transparent 40%, rgba(15,11,8,0.45) 100%);
+    linear-gradient(90deg, rgba(15,11,8,0.93) 0%, rgba(15,11,8,0.78) 28%, rgba(15,11,8,0.32) 58%, rgba(15,11,8,0.12) 100%),
+    linear-gradient(180deg, rgba(15,11,8,0.40) 0%, transparent 30%, rgba(15,11,8,0.60) 100%);
 }
-.hero__content { max-width: 60rem; }
+.hero__content { max-width: 40rem; }
 .hero__title {
   font-family: var(--serif); font-weight: 500; line-height: 1.0;
   letter-spacing: -0.015em;
@@ -225,10 +225,14 @@ html:not(.js) .preloader { opacity: 0; visibility: hidden; pointer-events: none;
 }
 .hero__title em { font-style: italic; font-weight: 400; color: var(--gold); }
 .hero__sub {
-  margin: 1.6rem 0 2.4rem; max-width: 34rem;
-  font-size: clamp(1rem, 1.4vw, 1.15rem); color: rgba(246,239,231,0.9);
+  margin: 1.6rem 0 2.4rem; max-width: 32rem;
+  font-size: clamp(1rem, 1.4vw, 1.15rem); color: rgba(246,239,231,0.85);
 }
 .hero__actions { display: flex; flex-wrap: wrap; gap: 1rem; }
+.hero__trust {
+  margin-top: 1.9rem; font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--gold); opacity: 0.92;
+}
 .hero__foot {
   position: absolute; left: var(--gut); right: var(--gut); bottom: 1.8rem;
   display: flex; justify-content: space-between; gap: 1rem;
