@@ -356,8 +356,15 @@ html:not(.js) .preloader { opacity: 0; visibility: hidden; pointer-events: none;
 }
 .menu-cat__title::after { content: ""; flex: 1; height: 1px; min-width: 40px; background: var(--line); }
 .dishes { list-style: none; }
-.dish { padding: 1.1rem 0; border-bottom: 1px solid var(--line); }
+.dish { display: flex; align-items: center; gap: 1.1rem; padding: 1.1rem 0; border-bottom: 1px solid var(--line); }
 .dish:last-child { border-bottom: none; }
+.dish__thumb {
+  width: 64px; height: 64px; flex-shrink: 0; border-radius: 50%; overflow: hidden;
+  border: 1px solid var(--line); box-shadow: 0 6px 18px -10px rgba(0,0,0,0.7);
+}
+.dish__thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--ease); }
+.dish:hover .dish__thumb img { transform: scale(1.09); }
+.dish__info { flex: 1; min-width: 0; }
 .dish__row { display: flex; align-items: baseline; gap: 0.8rem; }
 .dish__name { font-family: var(--serif); font-weight: 500; font-size: clamp(1.2rem, 2.2vw, 1.55rem); color: var(--text); }
 .dish__dots { flex: 1; border-bottom: 1px dotted var(--line); transform: translateY(-4px); }
@@ -495,6 +502,14 @@ html:not(.js) .preloader { opacity: 0; visibility: hidden; pointer-events: none;
 
 /* ---------- Floating dock (mobile) ---------- */
 .dock { display: none; }
+
+/* ---------- Site-wide grain / texture for depth ---------- */
+body::after {
+  content: ""; position: fixed; inset: 0; z-index: 5; pointer-events: none;
+  opacity: 0.05; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
 
 /* ============================================================
    Motion — content visible by default; .js enhances it.
