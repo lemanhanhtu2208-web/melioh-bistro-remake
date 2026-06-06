@@ -24,7 +24,7 @@
     if (!pre) return;
     // Let the champagne line finish its sweep before fading into the hero.
     var elapsed = (window.performance && performance.now) ? performance.now() : 0;
-    var wait = Math.max(700, 2600 - elapsed);
+    var wait = Math.max(500, 1700 - elapsed);
     setTimeout(function () { pre.classList.add("is-done"); }, wait);
   });
 
