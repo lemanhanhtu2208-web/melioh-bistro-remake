@@ -130,25 +130,58 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 /* ---------- Preloader ---------- */
 .preloader {
   position: fixed; inset: 0; z-index: 9999;
-  background: var(--wine);
+  background:
+    radial-gradient(circle at 50% 45%, rgba(200, 161, 90, 0.14), transparent 24%),
+    radial-gradient(circle at 50% 100%, rgba(30, 20, 20, 0.5), transparent 45%),
+    linear-gradient(180deg, #141010 0%, #111111 100%);
   display: grid; place-items: center;
+  overflow: hidden;
   transition: opacity 0.7s var(--ease), visibility 0.7s;
 }
+/* warm candlelight glow + soft corner vignette */
+.preloader::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(232, 207, 168, 0.10), transparent 38%),
+    radial-gradient(120% 90% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+  animation: candle 4.5s var(--ease) infinite alternate;
+}
+/* very subtle grain/noise so the background never reads flat */
+.preloader::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  opacity: 0.05; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
 .preloader.is-done { opacity: 0; visibility: hidden; }
-.preloader__inner { text-align: center; color: var(--cream); }
+.preloader__inner { position: relative; z-index: 1; text-align: center; }
 .preloader__name {
   display: block; font-family: var(--serif); font-style: italic;
   font-size: clamp(2rem, 6vw, 3.2rem); letter-spacing: 0.02em;
+  color: #F3E9DF;
+  text-shadow: 0 0 28px rgba(200, 161, 90, 0.18);
+  opacity: 0; transform: translateY(14px);
+  animation: nameIn 0.9s var(--ease) 0.15s forwards;
 }
 .preloader__line {
-  display: block; height: 1px; background: var(--gold);
-  width: 0; margin: 1.1rem auto; animation: line 1.4s var(--ease) forwards;
+  display: block; height: 1px; background: #C8A15A;
+  width: 0; margin: 1.1rem auto;
+  box-shadow: 0 0 10px rgba(200, 161, 90, 0.35);
+  animation: line 1s var(--ease) 0.85s forwards;
 }
 .preloader__sub {
-  font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase;
-  color: var(--champagne);
+  display: block;
+  font-size: 0.72rem; letter-spacing: 0.34em; text-transform: uppercase;
+  color: #C8A15A;
+  opacity: 0;
+  animation: subIn 0.8s var(--ease) 1.5s forwards;
 }
+@keyframes nameIn { to { opacity: 1; transform: translateY(0); } }
+@keyframes subIn { to { opacity: 0.85; } }
 @keyframes line { to { width: 180px; } }
+@keyframes candle {
+  0% { opacity: 0.85; }
+  100% { opacity: 1; }
+}
 
 /* ---------- Header ---------- */
 .header {
