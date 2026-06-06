@@ -4,41 +4,35 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MeliOh Bistro Da Nang — The Nest of Love by Han River</title>
-  <meta name="description" content="MeliOh Bistro is a romantic dining destination for couples in Da Nang. Candlelight dinners, proposals, anniversaries and private celebrations by the Han River. Since 2021." />
-  <meta name="theme-color" content="#3B1718" />
+  <meta name="description" content="MeliOh Bistro is a romantic fine dining destination in Da Nang. Candlelight dinners, anniversaries, birthdays and proposal moments by the Han River. Since 2021." />
+  <meta name="theme-color" content="#0F0B08" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="restaurant" />
   <meta property="og:title" content="MeliOh Bistro Da Nang — The Nest of Love by Han River" />
-  <meta property="og:description" content="Romantic dining, candlelight moments and unforgettable celebrations in Da Nang." />
+  <meta property="og:description" content="Romantic fine dining, candlelight moments and unforgettable celebrations in Da Nang." />
   <meta property="og:image" content="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200&q=80" />
   <meta property="og:locale" content="en_US" />
   <meta name="twitter:card" content="summary_large_image" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Marcellus&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Set the GSAP-ready flag before first paint so cinematic entrances
-       don't flash. main.js removes it again if GSAP fails to load.
-       Safety net: if the motion script never initializes (CDN blocked,
-       JS disabled, preview proxy, any error) the content is revealed
-       automatically so the page is never left hidden/blank. -->
+  <!-- Enable motion before first paint. A safety timeout reveals all
+       content if main.js never runs (CDN/JS error), so the page is
+       never left blank. -->
   <script>
     (function () {
       try {
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-        document.documentElement.classList.add("has-gsap");
+        document.documentElement.classList.add("js");
         window.setTimeout(function () {
-          if (!window.__meliohMotionReady) {
-            document.documentElement.classList.remove("has-gsap");
-          }
+          if (!window.__meliohReady) document.documentElement.classList.remove("js");
         }, 2500);
-      } catch (e) {
-        document.documentElement.classList.remove("has-gsap");
-      }
+      } catch (e) {}
     })();
   </script>
 </head>
@@ -63,12 +57,12 @@
       <nav class="nav" id="nav" aria-label="Primary">
         <a href="#about">About</a>
         <a href="#experience">Experience</a>
-        <a href="#services">Services</a>
+        <a href="#proposal">Proposal</a>
         <a href="#menu">Menu</a>
         <a href="#gallery">Gallery</a>
         <a href="#contact">Contact</a>
       </nav>
-      <a href="#reservation" class="btn btn--ghost header__cta">Book a Table</a>
+      <a href="#reservation" class="btn btn--copper header__cta">Book a Table</a>
       <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
         <span></span><span></span>
       </button>
@@ -79,19 +73,16 @@
 
     <!-- Hero -->
     <section class="hero" id="hero">
-      <div class="hero__media" data-parallax>
+      <div class="hero__media">
         <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=2000&q=80" alt="Candlelit dining table set for two by the Han River at dusk" />
       </div>
       <div class="hero__veil"></div>
-      <div class="hero__content">
-        <p class="hero__eyebrow">Da Nang · By the Han River</p>
-        <h1 class="hero__title">
-          <span class="hero__line"><span>The Nest of Love</span></span>
-          <span class="hero__line"><span><em>by Han River</em></span></span>
-        </h1>
+      <div class="hero__content reveal">
+        <p class="eyebrow eyebrow--gold">Da Nang · By the Han River</p>
+        <h1 class="hero__title">The Nest of Love<br /><em>by Han River</em></h1>
         <p class="hero__sub">Romantic dining, candlelight moments and unforgettable celebrations for two.</p>
         <div class="hero__actions">
-          <a href="#reservation" class="btn btn--solid">Book a Table</a>
+          <a href="#reservation" class="btn btn--copper">Book a Table</a>
           <a href="#experience" class="btn btn--line">Explore Experiences</a>
         </div>
       </div>
@@ -101,236 +92,212 @@
       </div>
     </section>
 
-    <!-- About -->
-    <section class="about section" id="about">
-      <div class="about__grid">
-        <div class="about__lead reveal">
-          <p class="eyebrow">Welcome to MeliOh</p>
-          <h2 class="display">A romantic bistro for moments<br /><em>worth remembering.</em></h2>
-        </div>
-        <div class="about__body reveal">
-          <p>MeliOh Bistro brings together warm hospitality, an elegant ambiance and a fusion of local and international cuisine, crafted for couples looking for a memorable dining experience in Da Nang.</p>
-          <p>At the heart of it sits our glass dome, the <em>Mái vòm tình yêu</em>, glowing over candlelit tables and the river beyond.</p>
-          <ul class="factlist">
-            <li><span>01</span> Romantic dining since 2021</li>
-            <li><span>02</span> A few steps from the Han River</li>
-            <li><span>03</span> Designed for couples &amp; celebrations</li>
-            <li><span>04</span> Fusion of local &amp; international cuisine</li>
-          </ul>
-        </div>
-      </div>
-    </section>
+    <!-- Our Story -->
+    <section class="story section" id="about">
+      <header class="band reveal">
+        <p class="eyebrow">Our Story</p>
+        <h2 class="display">A romantic bistro by the river.</h2>
+      </header>
 
-    <!-- Experience — sticky storytelling -->
-    <section class="experience section" id="experience">
-      <div class="exp__layout">
-        <aside class="exp__aside">
-          <p class="eyebrow">Why MeliOh</p>
-          <h2 class="display">Moments worth<br /><em>remembering.</em></h2>
-          <p class="exp__aside-text">Five ways to spend an evening with us, each one set quietly in advance so you can simply arrive, sit close and let the night unfold.</p>
-        </aside>
-
-        <div class="exp__items">
-          <article class="exp__item" data-exp>
-            <div class="exp__item-media"><img src="https://images.unsplash.com/photo-1559329007-40df8a9345d8?auto=format&fit=crop&w=1100&q=80" alt="Couple sharing a candlelit dinner" /></div>
-            <div class="exp__item-body">
-              <span class="exp__num">I</span>
-              <h3>Date Night</h3>
-              <p>Soft candlelight, a quiet table and a fusion menu meant to be lingered over. The kind of evening you do not want to end.</p>
-              <a href="#reservation" class="link">Make an inquiry</a>
-            </div>
-          </article>
-
-          <article class="exp__item" data-exp>
-            <div class="exp__item-media"><img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1100&q=80" alt="Anniversary table with flowers and candles" /></div>
-            <div class="exp__item-body">
-              <span class="exp__num">II</span>
-              <h3>Anniversary Dinner</h3>
-              <p>We set the scene with a banner, candles and a flower pot, so all you have to do is arrive and celebrate the years together.</p>
-              <a href="#reservation" class="link">Make an inquiry</a>
-            </div>
-          </article>
-
-          <article class="exp__item" data-exp>
-            <div class="exp__item-media"><img src="https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=1100&q=80" alt="Birthday celebration table setting" /></div>
-            <div class="exp__item-body">
-              <span class="exp__num">III</span>
-              <h3>Birthday Celebration</h3>
-              <p>A Happy Birthday banner, warm light and a dessert moment to remember, arranged for the two of you ahead of time.</p>
-              <a href="#reservation" class="link">Make an inquiry</a>
-            </div>
-          </article>
-
-          <article class="exp__item" data-exp>
-            <div class="exp__item-media"><img src="https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&w=1100&q=80" alt="Romantic proposal setup with roses at night" /></div>
-            <div class="exp__item-body">
-              <span class="exp__num">IV</span>
-              <h3>Proposal Moment</h3>
-              <p>Flowers, a "Will you marry me?" light and a private corner above the city. We help you capture the yes on your own phone.</p>
-              <a href="#reservation" class="link">Make an inquiry</a>
-            </div>
-          </article>
-
-          <article class="exp__item" data-exp>
-            <div class="exp__item-media"><img src="https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?auto=format&fit=crop&w=1100&q=80" alt="Rooftop dining with city bridge view at night" /></div>
-            <div class="exp__item-body">
-              <span class="exp__num">V</span>
-              <h3>Private Top Floor Party</h3>
-              <p>An open-air third floor facing the Tran Thi Ly Bridge, reserved for your gathering. Book at least two days ahead.</p>
-              <a href="#reservation" class="link">Make an inquiry</a>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- Services -->
-    <section class="services section" id="services">
-      <div class="section__head reveal">
-        <p class="eyebrow">Our Services</p>
-        <h2 class="display">Designed for love, celebration<br /><em>and surprise.</em></h2>
-      </div>
-
-      <div class="accordion reveal" id="accordion">
-        <div class="acc">
-          <button class="acc__head" aria-expanded="false">
-            <span class="acc__no">01</span>
-            <span class="acc__title">Romantic Anniversary / Birthday Dinner</span>
-            <span class="acc__icon" aria-hidden="true"></span>
-          </button>
-          <div class="acc__panel"><div class="acc__inner">
-            <p>Complimentary decoration with a Happy Anniversary or Happy Birthday banner, candles and a flower pot. Available by reservation only.</p>
-          </div></div>
-        </div>
-
-        <div class="acc">
-          <button class="acc__head" aria-expanded="false">
-            <span class="acc__no">02</span>
-            <span class="acc__title">Simple Proposal During Dinner</span>
-            <span class="acc__icon" aria-hidden="true"></span>
-          </button>
-          <div class="acc__panel"><div class="acc__inner">
-            <p>A quiet surprise at the table, complete with banner, candles and flowers, woven into your dinner so the moment feels effortless.</p>
-          </div></div>
-        </div>
-
-        <div class="acc">
-          <button class="acc__head" aria-expanded="false">
-            <span class="acc__no">03</span>
-            <span class="acc__title">Private Proposal on Panorama Top Floor</span>
-            <span class="acc__icon" aria-hidden="true"></span>
-          </button>
-          <div class="acc__panel"><div class="acc__inner">
-            <p>Dinner on the third floor with simple decoration and a panoramic view of the river and bridge. From 500.000 VND.</p>
-          </div></div>
-        </div>
-
-        <div class="acc">
-          <button class="acc__head" aria-expanded="false">
-            <span class="acc__no">04</span>
-            <span class="acc__title">Private VIP Proposal Package</span>
-            <span class="acc__icon" aria-hidden="true"></span>
-          </button>
-          <div class="acc__panel"><div class="acc__inner">
-            <p>The entire third floor reserved for you: a flower backdrop, a "Will you marry me?" light, candles, music and help recording the moment on your phone. From 2.500.000 VND.</p>
-          </div></div>
-        </div>
-
-        <div class="acc">
-          <button class="acc__head" aria-expanded="false">
-            <span class="acc__no">05</span>
-            <span class="acc__title">Special View Romantic Party</span>
-            <span class="acc__icon" aria-hidden="true"></span>
-          </button>
-          <div class="acc__panel"><div class="acc__inner">
-            <p>A private outdoor gathering on the third floor facing the Tran Thi Ly Bridge. Decoration and a private area are available for an additional fee. Reserve at least two days in advance.</p>
-          </div></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Proposal Packages -->
-    <section class="proposal section" id="proposal">
-      <div class="proposal__head reveal">
-        <p class="eyebrow eyebrow--gold">The Proposal</p>
-        <h2 class="display display--light">Ask the question<br /><em>by the river.</em></h2>
-        <p class="proposal__intro">Of all the evenings we host, this is the one we hold most carefully. Choose the setting that fits your story, and we will take care of the rest.</p>
-      </div>
-
-      <div class="packages">
-        <article class="pkg reveal">
-          <p class="pkg__no">Package I</p>
-          <h3>Simple Proposal During Dinner</h3>
-          <p class="pkg__desc">A surprise at your table, kept quiet until the moment is right.</p>
-          <dl class="pkg__meta">
-            <dt>Includes</dt><dd>Banner, candles, flower pot</dd>
-            <dt>Suited for</dt><dd>An intimate, unhurried dinner</dd>
-            <dt>From</dt><dd>Contact for details</dd>
+      <div class="story__grid">
+        <figure class="story__media media reveal">
+          <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80" alt="Warm restaurant interior glowing with soft candlelight" />
+        </figure>
+        <div class="story__body reveal">
+          <h3>The Story</h3>
+          <p>MeliOh Bistro is a romantic dining destination in Da Nang, created for candlelight dinners, anniversaries, birthdays and proposal moments by the Han River. Since 2021, MeliOh has served food, harmony and laughter through warm hospitality, elegant ambiance and fusion cuisine.</p>
+          <dl class="stats">
+            <div class="stat"><dt>Since</dt><dd>2021</dd></div>
+            <div class="stat"><dt>Style</dt><dd>Romantic Dining</dd></div>
+            <div class="stat"><dt>Where</dt><dd>By Han River</dd></div>
           </dl>
-          <a href="#reservation" class="link link--gold">Make an inquiry</a>
-        </article>
-
-        <article class="pkg pkg--feature reveal">
-          <p class="pkg__no">Package II</p>
-          <h3>Private Proposal on Panorama Top Floor</h3>
-          <p class="pkg__desc">Dinner above the city, with the river and bridge as your backdrop.</p>
-          <dl class="pkg__meta">
-            <dt>Includes</dt><dd>Top floor table, simple decoration</dd>
-            <dt>Suited for</dt><dd>A view-led, private moment</dd>
-            <dt>From</dt><dd>500.000 VND</dd>
-          </dl>
-          <a href="#reservation" class="link link--gold">Make an inquiry</a>
-        </article>
-
-        <article class="pkg reveal">
-          <p class="pkg__no">Package III</p>
-          <h3>Private VIP Proposal Package</h3>
-          <p class="pkg__desc">The whole top floor, a flower backdrop and a glowing "Will you marry me?".</p>
-          <dl class="pkg__meta">
-            <dt>Includes</dt><dd>Exclusive floor, LED, candles, music, video help</dd>
-            <dt>Suited for</dt><dd>A grand, unforgettable surprise</dd>
-            <dt>From</dt><dd>2.500.000 VND</dd>
-          </dl>
-          <a href="#reservation" class="link link--gold">Make an inquiry</a>
-        </article>
+        </div>
       </div>
     </section>
 
-    <!-- Menu Preview -->
-    <section class="menu section" id="menu">
-      <div class="menu__grid">
-        <div class="menu__intro reveal">
-          <p class="eyebrow">The Table</p>
+    <!-- Ingredients / Food Philosophy -->
+    <section class="philosophy section" id="ingredients">
+      <div class="philosophy__grid">
+        <div class="philosophy__body reveal">
+          <p class="eyebrow">The Ingredients</p>
           <h2 class="display">Food, harmony<br /><em>and laughter.</em></h2>
-          <p>Fusion dishes crafted with fresh ingredients and an eye for presentation, brought together for a long, easy evening.</p>
-          <div class="menu__actions">
-            <a href="#" class="btn btn--solid">View Full Menu</a>
-            <a href="#reservation" class="btn btn--line btn--dark">Book a Table</a>
+          <p>Fresh ingredients, elegant plating and a balance between local inspiration and international flavors create a dining experience made for moments worth remembering.</p>
+          <p class="signature">— The MeliOh Kitchen</p>
+          <div class="philosophy__actions">
+            <a href="#reservation" class="btn btn--copper">Reserve Now</a>
+            <a href="#menu" class="btn btn--line">View Menu</a>
           </div>
         </div>
-        <ul class="menu__list reveal">
-          <li><span class="menu__cat">Starters</span><span class="menu__hint">Light plates to begin</span></li>
-          <li><span class="menu__cat">Main Course</span><span class="menu__hint">Local &amp; international fusion</span></li>
-          <li><span class="menu__cat">Dessert</span><span class="menu__hint">A sweet final note</span></li>
-          <li><span class="menu__cat">Drinks</span><span class="menu__hint">Wine, cocktails &amp; more</span></li>
-          <li><span class="menu__cat">Set Menu</span><span class="menu__hint">Curated dinners for two</span></li>
-        </ul>
+        <figure class="philosophy__media media reveal">
+          <img src="https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=1200&q=80" alt="Plated fusion dish with careful presentation" />
+        </figure>
+      </div>
+    </section>
+
+    <!-- Experience -->
+    <section class="experience section" id="experience">
+      <header class="band reveal">
+        <p class="eyebrow">The Experience</p>
+        <h2 class="display">Moments worth remembering.</h2>
+      </header>
+
+      <div class="exp">
+        <article class="exp__row reveal">
+          <figure class="exp__media media"><img src="https://images.unsplash.com/photo-1559329007-40df8a9345d8?auto=format&fit=crop&w=1100&q=80" alt="Couple sharing a candlelit dinner" /></figure>
+          <div class="exp__text">
+            <span class="exp__num">01</span>
+            <h3>Date Night</h3>
+            <p>Soft candlelight, a quiet table and a fusion menu meant to be lingered over.</p>
+            <a href="#reservation" class="link">Make an inquiry</a>
+          </div>
+        </article>
+
+        <article class="exp__row exp__row--flip reveal">
+          <figure class="exp__media media"><img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1100&q=80" alt="Anniversary table with flowers and candles" /></figure>
+          <div class="exp__text">
+            <span class="exp__num">02</span>
+            <h3>Anniversary Dinner</h3>
+            <p>A banner, candles and a flower pot, set quietly so you simply arrive and celebrate.</p>
+            <a href="#reservation" class="link">Make an inquiry</a>
+          </div>
+        </article>
+
+        <article class="exp__row reveal">
+          <figure class="exp__media media"><img src="https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=1100&q=80" alt="Birthday celebration table setting" /></figure>
+          <div class="exp__text">
+            <span class="exp__num">03</span>
+            <h3>Birthday Celebration</h3>
+            <p>A Happy Birthday banner, warm light and a dessert moment to remember.</p>
+            <a href="#reservation" class="link">Make an inquiry</a>
+          </div>
+        </article>
+
+        <article class="exp__row exp__row--flip reveal">
+          <figure class="exp__media media"><img src="https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&w=1100&q=80" alt="Romantic proposal setup with roses at night" /></figure>
+          <div class="exp__text">
+            <span class="exp__num">04</span>
+            <h3>Proposal Moment</h3>
+            <p>Flowers, a "Will you marry me?" light and a private corner above the city.</p>
+            <a href="#reservation" class="link">Make an inquiry</a>
+          </div>
+        </article>
+
+        <article class="exp__row reveal">
+          <figure class="exp__media media"><img src="https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?auto=format&fit=crop&w=1100&q=80" alt="Rooftop dining with city bridge view at night" /></figure>
+          <div class="exp__text">
+            <span class="exp__num">05</span>
+            <h3>Private Top Floor Party</h3>
+            <p>An open-air third floor facing the Tran Thi Ly Bridge, reserved for your gathering.</p>
+            <a href="#reservation" class="link">Make an inquiry</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Proposal Moments -->
+    <section class="proposal section" id="proposal">
+      <div class="proposal__grid">
+        <figure class="proposal__media media reveal">
+          <img src="https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&w=1200&q=80" alt="Candlelit proposal table set with roses by the river" />
+        </figure>
+        <div class="proposal__body reveal">
+          <p class="eyebrow eyebrow--gold">The Proposal</p>
+          <h2 class="display">Proposal Moments</h2>
+          <p class="proposal__intro">Of all the evenings we host, this is the one we hold most carefully. Choose the setting that fits your story, and we will take care of the rest.</p>
+
+          <div class="accordion" id="accordion">
+            <div class="acc is-open">
+              <button class="acc__head" aria-expanded="true">
+                <span class="acc__no">01</span>
+                <span class="acc__title">Simple Proposal During Dinner</span>
+                <span class="acc__icon" aria-hidden="true"></span>
+              </button>
+              <div class="acc__panel"><div class="acc__inner">
+                <p>A quiet surprise at your table — banner, candles and flowers woven into your dinner so the moment feels effortless.</p>
+              </div></div>
+            </div>
+
+            <div class="acc">
+              <button class="acc__head" aria-expanded="false">
+                <span class="acc__no">02</span>
+                <span class="acc__title">Private Proposal on Panorama Top Floor</span>
+                <span class="acc__icon" aria-hidden="true"></span>
+              </button>
+              <div class="acc__panel"><div class="acc__inner">
+                <p>Dinner on the third floor with simple decoration and a panoramic view of the river and bridge. From 500.000 VND.</p>
+              </div></div>
+            </div>
+
+            <div class="acc">
+              <button class="acc__head" aria-expanded="false">
+                <span class="acc__no">03</span>
+                <span class="acc__title">Private VIP Proposal Package</span>
+                <span class="acc__icon" aria-hidden="true"></span>
+              </button>
+              <div class="acc__panel"><div class="acc__inner">
+                <p>The entire third floor reserved for you: a flower backdrop, a "Will you marry me?" light, candles, music and help recording the moment. From 2.500.000 VND.</p>
+              </div></div>
+            </div>
+          </div>
+
+          <a href="#reservation" class="link link--gold">Plan your proposal</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Menu Highlights -->
+    <section class="menu section" id="menu">
+      <header class="band reveal">
+        <p class="eyebrow">Signature</p>
+        <h2 class="display">Menu Highlights</h2>
+      </header>
+
+      <div class="menu__grid">
+        <div class="menu__list reveal">
+          <ul class="dishes">
+            <li class="dish">
+              <div class="dish__row"><span class="dish__name">Seared Scallops</span><span class="dish__dots"></span><span class="dish__price">320</span></div>
+              <p class="dish__desc">Starters · citrus butter, herb oil</p>
+            </li>
+            <li class="dish">
+              <div class="dish__row"><span class="dish__name">Han River Sea Bass</span><span class="dish__dots"></span><span class="dish__price">450</span></div>
+              <p class="dish__desc">Main Course · local greens, beurre blanc</p>
+            </li>
+            <li class="dish">
+              <div class="dish__row"><span class="dish__name">Wagyu Tenderloin</span><span class="dish__dots"></span><span class="dish__price">680</span></div>
+              <p class="dish__desc">Main Course · red wine jus, truffle potato</p>
+            </li>
+            <li class="dish">
+              <div class="dish__row"><span class="dish__name">Crème Caramel</span><span class="dish__dots"></span><span class="dish__price">160</span></div>
+              <p class="dish__desc">Dessert · burnt sugar, sea salt</p>
+            </li>
+            <li class="dish">
+              <div class="dish__row"><span class="dish__name">Candlelight Set for Two</span><span class="dish__dots"></span><span class="dish__price">1.200</span></div>
+              <p class="dish__desc">Set Menu · five courses, a glass of wine each</p>
+            </li>
+          </ul>
+          <p class="menu__note">Prices in thousand VND · à la carte &amp; drinks available on the full menu.</p>
+          <a href="#" class="btn btn--copper">View Full Menu</a>
+        </div>
+        <figure class="menu__media media reveal">
+          <img src="https://images.unsplash.com/photo-1485962398705-ef6a13c41e8f?auto=format&fit=crop&w=1100&q=80" alt="Signature plated dish under warm light" />
+        </figure>
       </div>
     </section>
 
     <!-- Gallery -->
     <section class="gallery section" id="gallery">
-      <div class="section__head reveal">
+      <header class="band reveal">
         <p class="eyebrow">Ambiance</p>
         <h2 class="display">Inside the nest.</h2>
-      </div>
+      </header>
       <div class="collage reveal">
-        <figure class="collage__item collage__item--tall"><img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80" alt="Warm restaurant interior with soft lighting" /><figcaption>The glass dome</figcaption></figure>
-        <figure class="collage__item"><img src="https://images.unsplash.com/photo-1485962398705-ef6a13c41e8f?auto=format&fit=crop&w=900&q=80" alt="Candlelit table detail" /><figcaption>Candlelight table</figcaption></figure>
-        <figure class="collage__item"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=900&q=80" alt="Table for two set for dinner" /><figcaption>Set for two</figcaption></figure>
-        <figure class="collage__item collage__item--wide"><img src="https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?auto=format&fit=crop&w=1300&q=80" alt="Rooftop with bridge view at night" /><figcaption>Bridge view, top floor</figcaption></figure>
-        <figure class="collage__item"><img src="https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&w=900&q=80" alt="Roses and proposal decoration" /><figcaption>Proposal setup</figcaption></figure>
-        <figure class="collage__item collage__item--tall"><img src="https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=900&q=80" alt="Plated fusion dish" /><figcaption>On the plate</figcaption></figure>
+        <figure class="collage__item collage__item--tall media"><img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80" alt="Warm restaurant interior with soft lighting" /><figcaption>The glass dome</figcaption></figure>
+        <figure class="collage__item media"><img src="https://images.unsplash.com/photo-1485962398705-ef6a13c41e8f?auto=format&fit=crop&w=900&q=80" alt="Candlelit table detail" /><figcaption>Candlelight table</figcaption></figure>
+        <figure class="collage__item media"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=900&q=80" alt="Table for two set for dinner" /><figcaption>Set for two</figcaption></figure>
+        <figure class="collage__item collage__item--wide media"><img src="https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?auto=format&fit=crop&w=1300&q=80" alt="Rooftop with bridge view at night" /><figcaption>Bridge view, top floor</figcaption></figure>
+        <figure class="collage__item media"><img src="https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&w=900&q=80" alt="Roses and proposal decoration" /><figcaption>Proposal setup</figcaption></figure>
+        <figure class="collage__item collage__item--tall media"><img src="https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=900&q=80" alt="Plated fusion dish" /><figcaption>On the plate</figcaption></figure>
       </div>
     </section>
 
@@ -339,7 +306,7 @@
       <div class="reservation__grid">
         <div class="reservation__lead reveal">
           <p class="eyebrow eyebrow--gold">Reservation</p>
-          <h2 class="display display--light">Plan your evening.</h2>
+          <h2 class="display">Plan your evening.</h2>
           <p>Tell us a little about the occasion and we will arrange the table, the setting and the surprise. We will reply by phone or email to confirm the details.</p>
           <ul class="reservation__contact">
             <li><span>Call</span><a href="tel:+840918204008">+84 0918 204 008</a></li>
@@ -366,17 +333,6 @@
 
           <div class="form__row">
             <div class="field">
-              <label for="email">Email <small>(optional)</small></label>
-              <input type="email" id="email" name="email" />
-            </div>
-            <div class="field">
-              <label for="guests">Number of guests <span>*</span></label>
-              <input type="number" id="guests" name="guests" min="1" max="40" required />
-            </div>
-          </div>
-
-          <div class="form__row">
-            <div class="field">
               <label for="date">Date <span>*</span></label>
               <input type="date" id="date" name="date" required />
             </div>
@@ -387,6 +343,10 @@
           </div>
 
           <div class="form__row">
+            <div class="field">
+              <label for="guests">Number of guests <span>*</span></label>
+              <input type="number" id="guests" name="guests" min="1" max="40" required />
+            </div>
             <div class="field">
               <label for="occasion">Occasion</label>
               <select id="occasion" name="occasion">
@@ -399,17 +359,6 @@
                 <option>Other</option>
               </select>
             </div>
-            <div class="field">
-              <label for="package">Preferred service / package</label>
-              <select id="package" name="package">
-                <option value="">No preference</option>
-                <option>Romantic Anniversary / Birthday Dinner</option>
-                <option>Simple Proposal During Dinner</option>
-                <option>Private Proposal on Panorama Top Floor</option>
-                <option>Private VIP Proposal Package</option>
-                <option>Special View Romantic Party</option>
-              </select>
-            </div>
           </div>
 
           <div class="field">
@@ -417,18 +366,20 @@
             <textarea id="message" name="message" rows="4" placeholder="Anything we should know to make the evening yours?"></textarea>
           </div>
 
-          <button type="submit" class="btn btn--solid form__submit">Plan your evening</button>
+          <button type="submit" class="btn btn--copper form__submit">Plan your evening</button>
           <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
         </form>
       </div>
     </section>
 
-    <!-- Location / Contact -->
+    <!-- Contact / Location -->
     <section class="contact section" id="contact">
+      <header class="band reveal">
+        <p class="eyebrow">Find Us</p>
+        <h2 class="display">By the Han River.</h2>
+      </header>
       <div class="contact__grid">
         <div class="contact__info reveal">
-          <p class="eyebrow">Find Us</p>
-          <h2 class="display">By the Han River.</h2>
           <dl class="contact__list">
             <dt>Address</dt>
             <dd>Lot A1-04 The Villas of Green Islands,<br />Hoa Cuong Bac, Hai Chau, Da Nang</dd>
@@ -440,65 +391,19 @@
             <dd>Daily · 16:00 – 23:00</dd>
           </dl>
           <div class="contact__actions">
-            <a href="https://www.google.com/maps/search/?api=1&query=MeliOh+Bistro+Da+Nang" target="_blank" rel="noopener" class="btn btn--line btn--dark">Open in Google Maps</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=MeliOh+Bistro+Da+Nang" target="_blank" rel="noopener" class="btn btn--line">Open in Google Maps</a>
             <div class="contact__social">
               <a href="https://facebook.com/" target="_blank" rel="noopener" aria-label="Facebook">Facebook</a>
               <a href="https://instagram.com/" target="_blank" rel="noopener" aria-label="Instagram">Instagram</a>
             </div>
           </div>
         </div>
-        <div class="contact__map reveal">
+        <div class="contact__map media reveal">
           <iframe
             title="MeliOh Bistro location on Google Maps"
             src="https://www.google.com/maps?q=Hoa%20Cuong%20Bac%2C%20Hai%20Chau%2C%20Da%20Nang&output=embed"
             loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         </div>
-      </div>
-    </section>
-
-    <!-- Stories -->
-    <section class="stories section" id="stories">
-      <div class="section__head reveal">
-        <p class="eyebrow">Stories</p>
-        <h2 class="display">Notes from the nest.</h2>
-      </div>
-      <div class="stories__list reveal">
-        <article class="story">
-          <div class="story__media"><img src="https://images.unsplash.com/photo-1470337458703-46ad1756a187?auto=format&fit=crop&w=900&q=80" alt="Evening lights by the water" /></div>
-          <p class="story__tag">The Place</p>
-          <h3>MeliOh Bistro Da Nang, the nest of love</h3>
-          <p class="story__excerpt">How a glass dome by the river became a quiet stage for first dates, last questions and everything between.</p>
-          <a href="#" class="link">Read more</a>
-        </article>
-        <article class="story">
-          <div class="story__media"><img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=900&q=80" alt="Candlelit dinner setting" /></div>
-          <p class="story__tag">Ideas</p>
-          <h3>Romantic dinner ideas in Da Nang</h3>
-          <p class="story__excerpt">From sunset on the water to candlelight after dark, small ways to turn an ordinary night into one you keep.</p>
-          <a href="#" class="link">Read more</a>
-        </article>
-        <article class="story">
-          <div class="story__media"><img src="https://images.unsplash.com/photo-1522413452208-996ff3f3e740?auto=format&fit=crop&w=900&q=80" alt="Proposal with roses" /></div>
-          <p class="story__tag">Guide</p>
-          <h3>How to plan a proposal dinner</h3>
-          <p class="story__excerpt">A simple checklist for the question, from choosing the floor to keeping the surprise a secret until the end.</p>
-          <a href="#" class="link">Read more</a>
-        </article>
-      </div>
-    </section>
-
-    <!-- Newsletter -->
-    <section class="newsletter">
-      <div class="newsletter__inner reveal">
-        <div>
-          <h2 class="display display--sm">Stay close to MeliOh.</h2>
-          <p>Seasonal menus, quiet offers and new ways to celebrate, now and then in your inbox.</p>
-        </div>
-        <form class="newsletter__form" id="newsletterForm" action="https://formspree.io/f/your-form-id" method="POST" novalidate>
-          <label for="news-email" class="sr-only">Email address</label>
-          <input type="email" id="news-email" name="email" placeholder="Your email address" required />
-          <button type="submit" class="btn btn--solid">Subscribe</button>
-        </form>
       </div>
     </section>
 
@@ -512,14 +417,19 @@
           <span class="logo__name">MeliOh</span><span class="logo__tag">Bistro</span>
         </a>
         <p>The nest of love by Han River. We serve food, harmony &amp; laughter since 2021.</p>
+        <form class="footer__news" id="newsletterForm" action="https://formspree.io/f/your-form-id" method="POST" novalidate>
+          <label for="news-email" class="sr-only">Email address</label>
+          <input type="email" id="news-email" name="email" placeholder="Your email address" required />
+          <button type="submit" class="btn btn--copper">Subscribe</button>
+        </form>
       </div>
       <nav class="footer__col" aria-label="Quick links">
         <h4>Explore</h4>
         <a href="#about">About</a>
         <a href="#experience">Experience</a>
-        <a href="#services">Services</a>
         <a href="#proposal">Proposal</a>
         <a href="#menu">Menu</a>
+        <a href="#gallery">Gallery</a>
       </nav>
       <div class="footer__col">
         <h4>Contact</h4>
@@ -540,7 +450,7 @@
     </div>
   </footer>
 
-  <!-- Floating contact (mobile-first) -->
+  <!-- Floating contact (mobile) -->
   <div class="dock" aria-label="Quick contact">
     <a href="tel:+840918204008" aria-label="Call">Call</a>
     <a href="https://m.me/" target="_blank" rel="noopener" aria-label="Messenger">Chat</a>
@@ -548,10 +458,6 @@
     <a href="#reservation" class="dock__cta" aria-label="Book a table">Book</a>
   </div>
 
-  <!-- Motion libraries (GSAP + ScrollTrigger + Lenis smooth scroll) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js" defer></script>
   <script src="main.js" defer></script>
 </body>
 </html>
