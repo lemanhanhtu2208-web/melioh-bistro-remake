@@ -1,18 +1,23 @@
 /* MeliOh Bistro Da Nang — Remake Concept
-   Interactions: preloader, header, mobile nav, reveal, accordion,
-   parallax, form validation + Formspree submit. */
+   Cinematic motion: preloader, hero entrance + parallax, sticky
+   storytelling, clip-path image reveals, package interaction,
+   gallery, reservation form, footer — powered by GSAP + ScrollTrigger
+   + Lenis, with a graceful no-JS / reduced-motion fallback. */
 
 (function () {
   "use strict";
 
+  var doc = document.documentElement;
   var prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var isMobile = window.matchMedia("(max-width: 720px)").matches;
 
-  /* ---------- Preloader ---------- */
-  window.addEventListener("load", function () {
-    var pre = document.getElementById("preloader");
-    if (!pre) return;
-    setTimeout(function () { pre.classList.add("is-done"); }, 600);
-  });
+  // GSAP + ScrollTrigger arrive via deferred CDN scripts before this file.
+  var hasGSAP = !!(window.gsap && window.ScrollTrigger) && !prefersReduced;
+
+  // If the motion libraries didn't load (offline / blocked), drop the
+  // pre-paint flag so everything is visible and fall back to the
+  // IntersectionObserver reveals below.
+  if (!hasGSAP) doc.classList.remove("has-gsap");
 
   /* ---------- Year ---------- */
   var yearEl = document.getElementById("year");
@@ -32,7 +37,7 @@
   var nav = document.getElementById("nav");
   function closeNav() {
     header.classList.remove("is-open");
-    burger.setAttribute("aria-expanded", "false");
+    if (burger) burger.setAttribute("aria-expanded", "false");
   }
   if (burger) {
     burger.addEventListener("click", function () {
@@ -44,29 +49,12 @@
     });
   }
 
-  /* ---------- Reveal on scroll ---------- */
-  var reveals = document.querySelectorAll(".reveal");
-  if ("IntersectionObserver" in window && !prefersReduced) {
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) {
-          e.target.classList.add("is-in");
-          io.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
-    reveals.forEach(function (el) { io.observe(el); });
-  } else {
-    reveals.forEach(function (el) { el.classList.add("is-in"); });
-  }
-
   /* ---------- Accordion ---------- */
   document.querySelectorAll(".acc").forEach(function (acc) {
     var head = acc.querySelector(".acc__head");
     var panel = acc.querySelector(".acc__panel");
     head.addEventListener("click", function () {
       var isOpen = acc.classList.contains("is-open");
-      // close others
       document.querySelectorAll(".acc.is-open").forEach(function (o) {
         if (o !== acc) {
           o.classList.remove("is-open");
@@ -83,21 +71,217 @@
         head.setAttribute("aria-expanded", "true");
         panel.style.maxHeight = panel.scrollHeight + "px";
       }
+      // Heights changed — keep scroll triggers in sync.
+      if (hasGSAP && window.ScrollTrigger) {
+        window.ScrollTrigger.refresh();
+      }
     });
   });
 
-  /* ---------- Light hero parallax ---------- */
-  var parallax = document.querySelector("[data-parallax]");
-  if (parallax && !prefersReduced && window.innerWidth > 720) {
-    window.addEventListener("scroll", function () {
-      var y = window.scrollY;
-      if (y < window.innerHeight) {
-        parallax.style.transform = "translateY(" + (y * 0.18) + "px)";
-      }
-    }, { passive: true });
+  /* ============================================================
+     Motion
+     ============================================================ */
+  if (hasGSAP) {
+    initCinematicMotion();
+  } else {
+    initFallbackReveals();
+    // Plain fade-out preloader (CSS handles the entrance animations).
+    window.addEventListener("load", function () {
+      var pre = document.getElementById("preloader");
+      if (pre) setTimeout(function () { pre.classList.add("is-done"); }, 600);
+    });
   }
 
-  /* ---------- Reservation form ---------- */
+  /* ---------- Fallback reveals (no GSAP) ---------- */
+  function initFallbackReveals() {
+    var reveals = document.querySelectorAll(".reveal");
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add("is-in");
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+      reveals.forEach(function (el) { io.observe(el); });
+    } else {
+      reveals.forEach(function (el) { el.classList.add("is-in"); });
+    }
+  }
+
+  /* ---------- Cinematic motion (GSAP) ---------- */
+  function initCinematicMotion() {
+    var gsap = window.gsap;
+    var ScrollTrigger = window.ScrollTrigger;
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* --- Lenis smooth scroll (desktop / pointer only) --- */
+    var lenis = null;
+    if (window.Lenis && !isMobile) {
+      lenis = new window.Lenis({
+        duration: 1.2,
+        easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+        smoothWheel: true
+      });
+      lenis.on("scroll", ScrollTrigger.update);
+      gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
+      gsap.ticker.lagSmoothing(0);
+
+      // Smooth in-page anchor navigation.
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        var id = a.getAttribute("href");
+        if (!id || id.length < 2) return;
+        a.addEventListener("click", function (e) {
+          var target = document.querySelector(id);
+          if (!target) return;
+          e.preventDefault();
+          closeNav();
+          lenis.scrollTo(target, { offset: -64 });
+        });
+      });
+    }
+
+    /* --- Initial states for the hero entrance --- */
+    gsap.set(".header", { y: -14 });
+    gsap.set([".hero__eyebrow", ".hero__sub", ".hero__actions"], { y: 18 });
+
+    /* --- Preloader timeline --- */
+    function playPreloaderOut(onDone) {
+      var pre = document.getElementById("preloader");
+      if (!pre) { onDone(); return; }
+      gsap.to(pre, {
+        opacity: 0,
+        duration: 0.9,
+        ease: "power2.inOut",
+        delay: 0.5,
+        onComplete: function () {
+          pre.classList.add("is-done");
+          onDone();
+        }
+      });
+    }
+
+    /* --- Hero entrance --- */
+    function playHeroEntrance() {
+      var tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      tl.to(".header", { opacity: 1, y: 0, duration: 1.1 }, 0)
+        .to(".hero__media img", { scale: 1, duration: 1.9, ease: "power2.out" }, 0)
+        .to(".hero__eyebrow", { opacity: 1, y: 0, duration: 0.9 }, 0.25)
+        .to(".hero__line > span", { yPercent: 0, duration: 1.15, stagger: 0.12 }, 0.4)
+        .to(".hero__sub", { opacity: 1, y: 0, duration: 0.9 }, 1.0)
+        .to(".hero__actions", { opacity: 1, y: 0, duration: 0.9 }, 1.15)
+        .to(".hero__foot", { opacity: 1, duration: 0.9 }, 1.3);
+    }
+
+    window.addEventListener("load", function () {
+      playPreloaderOut(playHeroEntrance);
+      // Recalculate trigger positions once images/fonts have settled.
+      ScrollTrigger.refresh();
+    });
+
+    /* --- Hero scroll parallax (desktop only) --- */
+    if (!isMobile) {
+      gsap.set(".hero__veil", { opacity: 0.85 });
+      gsap.fromTo(".hero__media img",
+        { scale: 1 },
+        {
+          scale: 1.12, yPercent: 6, ease: "none", immediateRender: false,
+          scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true }
+        });
+      gsap.to(".hero__content", {
+        yPercent: -16, opacity: 0, ease: "none",
+        scrollTrigger: { trigger: ".hero", start: "top top", end: "70% top", scrub: true }
+      });
+      gsap.to(".hero__veil", {
+        opacity: 1, ease: "none",
+        scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true }
+      });
+    }
+
+    /* --- Generic reveals (fade-in-up, per element) --- */
+    gsap.utils.toArray(".reveal").forEach(function (el) {
+      gsap.fromTo(el,
+        { opacity: 0, y: 34 },
+        {
+          opacity: 1, y: 0, duration: 1.1, ease: "power3.out",
+          scrollTrigger: { trigger: el, start: "top 86%" }
+        });
+    });
+
+    /* --- Clip-path image wipes (left to right) --- */
+    var wipeImgs = gsap.utils.toArray(
+      ".exp__item-media img, .story__media img, .gallery .collage__item img"
+    );
+    wipeImgs.forEach(function (img) {
+      img.setAttribute("data-img-wipe", "");
+      gsap.to(img, {
+        clipPath: "inset(0 0% 0 0)", duration: 1.3, ease: "power3.out",
+        scrollTrigger: { trigger: img, start: "top 90%" }
+      });
+    });
+
+    /* --- About: keyword / fact stagger --- */
+    if (document.querySelector(".factlist")) {
+      gsap.from(".factlist li", {
+        opacity: 0, y: 18, duration: 0.8, stagger: 0.1, ease: "power3.out",
+        scrollTrigger: { trigger: ".factlist", start: "top 88%" }
+      });
+    }
+
+    /* --- Experience: sticky storytelling, per item --- */
+    var tints = ["#F8EFE3", "#F7ECDD", "#F8EDE0", "#F6EADB", "#F7ECDE"];
+    var experience = document.querySelector(".experience");
+    gsap.utils.toArray(".exp__item").forEach(function (item, i) {
+      var img = item.querySelector("img");
+      var bodyBits = item.querySelectorAll(".exp__item-body > *");
+
+      gsap.fromTo(img,
+        { scale: 1.12 },
+        {
+          scale: 1, duration: 1.6, ease: "power2.out", immediateRender: false,
+          scrollTrigger: { trigger: item, start: "top 88%" }
+        });
+
+      gsap.from(bodyBits, {
+        opacity: 0, y: 24, duration: 1, stagger: 0.08, ease: "power3.out",
+        scrollTrigger: { trigger: item, start: "top 78%" }
+      });
+
+      // Very subtle warm background tint as each moment takes focus.
+      if (experience) {
+        ScrollTrigger.create({
+          trigger: item, start: "top center", end: "bottom center",
+          onToggle: function (self) {
+            if (self.isActive) {
+              gsap.to(experience, { backgroundColor: tints[i % tints.length], duration: 1.2, ease: "power2.out" });
+            }
+          }
+        });
+      }
+    });
+
+    /* --- Reservation: invitation-card glow on reveal --- */
+    var resForm = document.querySelector(".reservation .form");
+    if (resForm) {
+      ScrollTrigger.create({
+        trigger: resForm, start: "top 80%", once: true,
+        onEnter: function () { resForm.classList.add("is-shown"); }
+      });
+    }
+
+    /* --- Footer reveal (staggered) --- */
+    if (document.querySelector(".footer")) {
+      gsap.from(".footer__brand, .footer__col", {
+        opacity: 0, y: 24, duration: 0.9, stagger: 0.1, ease: "power3.out",
+        scrollTrigger: { trigger: ".footer", start: "top 92%" }
+      });
+    }
+  }
+
+  /* ============================================================
+     Reservation form (Formspree) — logic unchanged
+     ============================================================ */
   var form = document.getElementById("reservationForm");
   var statusEl = document.getElementById("formStatus");
 
