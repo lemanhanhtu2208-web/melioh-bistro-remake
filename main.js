@@ -114,6 +114,9 @@
   function initCinematicMotion() {
     var gsap = window.gsap;
     var ScrollTrigger = window.ScrollTrigger;
+    // Signal the head safety-net that motion is taking over, so it won't
+    // strip the cinematic states even on slow (>2.5s) page loads.
+    window.__meliohMotionReady = true;
     gsap.registerPlugin(ScrollTrigger);
 
     /* --- Lenis smooth scroll (desktop / pointer only) --- */

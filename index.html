@@ -22,14 +22,23 @@
   <link rel="stylesheet" href="styles.css" />
 
   <!-- Set the GSAP-ready flag before first paint so cinematic entrances
-       don't flash. main.js removes it again if GSAP fails to load. -->
+       don't flash. main.js removes it again if GSAP fails to load.
+       Safety net: if the motion script never initializes (CDN blocked,
+       JS disabled, preview proxy, any error) the content is revealed
+       automatically so the page is never left hidden/blank. -->
   <script>
     (function () {
       try {
-        if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-          document.documentElement.classList.add("has-gsap");
-        }
-      } catch (e) {}
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        document.documentElement.classList.add("has-gsap");
+        window.setTimeout(function () {
+          if (!window.__meliohMotionReady) {
+            document.documentElement.classList.remove("has-gsap");
+          }
+        }, 2500);
+      } catch (e) {
+        document.documentElement.classList.remove("has-gsap");
+      }
     })();
   </script>
 </head>
