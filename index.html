@@ -246,9 +246,12 @@
 
     <!-- Menu Highlights -->
     <section class="menu section" id="menu">
-      <header class="band reveal">
-        <p class="eyebrow">The Table</p>
-        <h2 class="display">Menu Highlights</h2>
+      <header class="menu__head reveal">
+        <div>
+          <p class="eyebrow">The Table</p>
+          <h2 class="display">Menu</h2>
+        </div>
+        <a href="#" class="link link--gold">View full menu</a>
       </header>
 
       <!-- Signature spotlight -->
@@ -277,63 +280,51 @@
         </div>
       </article>
 
-      <!-- Categories -->
-      <div class="menu__cats">
-        <div class="menu-cat reveal">
-          <h4 class="menu-cat__title">Starters</h4>
-          <ul class="dishes">
-            <li class="dish">
-              <span class="dish__thumb"><img src="https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=200&q=70" alt="Burrata and tomato" /></span>
-              <div class="dish__info"><div class="dish__row"><span class="dish__name">Burrata &amp; Tomato</span><span class="dish__dots"></span><span class="dish__price">240</span></div><p class="dish__desc">basil oil, aged balsamic</p></div>
-            </li>
-            <li class="dish">
-              <span class="dish__thumb"><img src="https://images.unsplash.com/photo-1485962398705-ef6a13c41e8f?auto=format&fit=crop&w=200&q=70" alt="Foie gras toast" /></span>
-              <div class="dish__info"><div class="dish__row"><span class="dish__name">Foie Gras Toast</span><span class="dish__dots"></span><span class="dish__price">360</span></div><p class="dish__desc">brioche, fig, port reduction</p></div>
-            </li>
-          </ul>
-        </div>
+      <!-- Courses: a plated dish per group, alternating left/right -->
+      <div class="courses">
+        <article class="course reveal">
+          <figure class="course__plate"><img src="https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=600&q=75" alt="Plated starter" /></figure>
+          <div class="course__items">
+            <h4 class="course__title">Starters</h4>
+            <ul class="dishes">
+              <li class="dish"><div class="dish__info"><div class="dish__row"><span class="dish__name">Burrata &amp; Tomato</span><span class="dish__dots"></span><span class="dish__price">240</span></div><p class="dish__desc">basil oil, aged balsamic</p></div></li>
+              <li class="dish"><div class="dish__info"><div class="dish__row"><span class="dish__name">Foie Gras Toast</span><span class="dish__dots"></span><span class="dish__price">360</span></div><p class="dish__desc">brioche, fig, port reduction</p></div></li>
+            </ul>
+          </div>
+        </article>
 
-        <div class="menu-cat reveal">
-          <h4 class="menu-cat__title">Main Course</h4>
-          <ul class="dishes">
-            <li class="dish">
-              <span class="dish__thumb"><img src="https://images.unsplash.com/photo-1559329007-40df8a9345d8?auto=format&fit=crop&w=200&q=70" alt="Han River sea bass" /></span>
-              <div class="dish__info"><div class="dish__row"><span class="dish__name">Han River Sea Bass</span><span class="dish__dots"></span><span class="dish__price">450</span></div><p class="dish__desc">local greens, beurre blanc</p></div>
-            </li>
-            <li class="dish">
-              <span class="dish__thumb"><img src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=200&q=70" alt="Duck confit" /></span>
-              <div class="dish__info"><div class="dish__row"><span class="dish__name">Duck Confit</span><span class="dish__dots"></span><span class="dish__price">420</span></div><p class="dish__desc">orange glaze, root vegetables</p></div>
-            </li>
-          </ul>
-        </div>
+        <article class="course course--flip reveal">
+          <figure class="course__plate"><img src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=600&q=75" alt="Plated main course" /></figure>
+          <div class="course__items">
+            <h4 class="course__title">Main Course</h4>
+            <ul class="dishes">
+              <li class="dish"><div class="dish__info"><div class="dish__row"><span class="dish__name">Han River Sea Bass</span><span class="dish__dots"></span><span class="dish__price">450</span></div><p class="dish__desc">local greens, beurre blanc</p></div></li>
+              <li class="dish"><div class="dish__info"><div class="dish__row"><span class="dish__name">Duck Confit</span><span class="dish__dots"></span><span class="dish__price">420</span></div><p class="dish__desc">orange glaze, root vegetables</p></div></li>
+            </ul>
+          </div>
+        </article>
 
-        <div class="menu-cat reveal">
-          <h4 class="menu-cat__title">Desserts</h4>
-          <ul class="dishes">
-            <li class="dish">
-              <span class="dish__thumb"><img src="https://images.unsplash.com/photo-1485962398705-ef6a13c41e8f?auto=format&fit=crop&w=200&q=70" alt="Crème caramel" /></span>
-              <div class="dish__info"><div class="dish__row"><span class="dish__name">Crème Caramel</span><span class="dish__dots"></span><span class="dish__price">160</span></div><p class="dish__desc">burnt sugar, sea salt</p></div>
-            </li>
-            <li class="dish">
-              <span class="dish__thumb"><img src="https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=200&q=70" alt="Dark chocolate fondant" /></span>
-              <div class="dish__info"><div class="dish__row"><span class="dish__name">Dark Chocolate Fondant</span><span class="dish__dots"></span><span class="dish__price">180</span></div><p class="dish__desc">vanilla cream, berries</p></div>
-            </li>
-          </ul>
-        </div>
+        <article class="course reveal">
+          <figure class="course__plate"><img src="https://images.unsplash.com/photo-1485962398705-ef6a13c41e8f?auto=format&fit=crop&w=600&q=75" alt="Plated dessert" /></figure>
+          <div class="course__items">
+            <h4 class="course__title">Desserts</h4>
+            <ul class="dishes">
+              <li class="dish"><div class="dish__info"><div class="dish__row"><span class="dish__name">Crème Caramel</span><span class="dish__dots"></span><span class="dish__price">160</span></div><p class="dish__desc">burnt sugar, sea salt</p></div></li>
+              <li class="dish"><div class="dish__info"><div class="dish__row"><span class="dish__name">Dark Chocolate Fondant</span><span class="dish__dots"></span><span class="dish__price">180</span></div><p class="dish__desc">vanilla cream, berries</p></div></li>
+            </ul>
+          </div>
+        </article>
 
-        <div class="menu-cat reveal">
-          <h4 class="menu-cat__title">Drinks &amp; Wine</h4>
-          <ul class="dishes">
-            <li class="dish">
-              <span class="dish__thumb"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=200&q=70" alt="House red wine" /></span>
-              <div class="dish__info"><div class="dish__row"><span class="dish__name">House Red, by the glass</span><span class="dish__dots"></span><span class="dish__price">180</span></div><p class="dish__desc">smooth, candlelight favourite</p></div>
-            </li>
-            <li class="dish">
-              <span class="dish__thumb"><img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=200&q=70" alt="Candlelight set for two" /></span>
-              <div class="dish__info"><div class="dish__row"><span class="dish__name">Candlelight Set for Two</span><span class="dish__dots"></span><span class="dish__price">1.200</span></div><p class="dish__desc">five courses, a glass of wine each</p></div>
-            </li>
-          </ul>
-        </div>
+        <article class="course course--flip reveal">
+          <figure class="course__plate"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=600&q=75" alt="Wine and table" /></figure>
+          <div class="course__items">
+            <h4 class="course__title">Drinks &amp; Wine</h4>
+            <ul class="dishes">
+              <li class="dish"><div class="dish__info"><div class="dish__row"><span class="dish__name">House Red, by the glass</span><span class="dish__dots"></span><span class="dish__price">180</span></div><p class="dish__desc">smooth, candlelight favourite</p></div></li>
+              <li class="dish"><div class="dish__info"><div class="dish__row"><span class="dish__name">Candlelight Set for Two</span><span class="dish__dots"></span><span class="dish__price">1.200</span></div><p class="dish__desc">five courses, a glass of wine each</p></div></li>
+            </ul>
+          </div>
+        </article>
       </div>
 
       <div class="menu__foot reveal">
