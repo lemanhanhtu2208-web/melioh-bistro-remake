@@ -40,10 +40,16 @@
 
   <!-- Preloader -->
   <div class="preloader" id="preloader" aria-hidden="true">
+    <div class="preloader__bg"></div>
     <div class="preloader__inner">
-      <span class="preloader__name">MeliOh Bistro</span>
-      <span class="preloader__line"></span>
+      <div class="preloader__logo" aria-hidden="true">
+        <span class="preloader__logo-name">MeliOh</span>
+        <span class="preloader__logo-tag">Bistro</span>
+      </div>
+      <p class="preloader__name">MeliOh Bistro Da Nang</p>
       <span class="preloader__sub">Da Nang · Since 2021</span>
+      <div class="preloader__bar"><span></span></div>
+      <span class="preloader__hint">Preparing your evening</span>
     </div>
   </div>
 
@@ -248,40 +254,86 @@
     <!-- Menu Highlights -->
     <section class="menu section" id="menu">
       <header class="band reveal">
-        <p class="eyebrow">Signature</p>
+        <p class="eyebrow">The Table</p>
         <h2 class="display">Menu Highlights</h2>
       </header>
 
-      <div class="menu__grid">
-        <div class="menu__list reveal">
-          <ul class="dishes">
-            <li class="dish">
-              <div class="dish__row"><span class="dish__name">Seared Scallops</span><span class="dish__dots"></span><span class="dish__price">320</span></div>
-              <p class="dish__desc">Starters · citrus butter, herb oil</p>
-            </li>
-            <li class="dish">
-              <div class="dish__row"><span class="dish__name">Han River Sea Bass</span><span class="dish__dots"></span><span class="dish__price">450</span></div>
-              <p class="dish__desc">Main Course · local greens, beurre blanc</p>
-            </li>
-            <li class="dish">
-              <div class="dish__row"><span class="dish__name">Wagyu Tenderloin</span><span class="dish__dots"></span><span class="dish__price">680</span></div>
-              <p class="dish__desc">Main Course · red wine jus, truffle potato</p>
-            </li>
-            <li class="dish">
-              <div class="dish__row"><span class="dish__name">Crème Caramel</span><span class="dish__dots"></span><span class="dish__price">160</span></div>
-              <p class="dish__desc">Dessert · burnt sugar, sea salt</p>
-            </li>
-            <li class="dish">
-              <div class="dish__row"><span class="dish__name">Candlelight Set for Two</span><span class="dish__dots"></span><span class="dish__price">1.200</span></div>
-              <p class="dish__desc">Set Menu · five courses, a glass of wine each</p>
-            </li>
-          </ul>
-          <p class="menu__note">Prices in thousand VND · à la carte &amp; drinks available on the full menu.</p>
-          <a href="#" class="btn btn--copper">View Full Menu</a>
-        </div>
-        <figure class="menu__media media reveal">
-          <img src="https://images.unsplash.com/photo-1485962398705-ef6a13c41e8f?auto=format&fit=crop&w=1100&q=80" alt="Signature plated dish under warm light" />
+      <!-- Signature spotlight -->
+      <article class="signature reveal">
+        <figure class="signature__media media">
+          <img src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=1300&q=80" alt="Seared wagyu tenderloin plated under warm light" />
         </figure>
+        <div class="signature__body">
+          <p class="eyebrow eyebrow--gold">Signature</p>
+          <h3>Wagyu Tenderloin</h3>
+          <p>Slow-seared and rested, finished with a red wine jus and truffle potato — the dish our couples return for.</p>
+          <p class="signature__price">680<small> / thousand VND</small></p>
+        </div>
+      </article>
+
+      <!-- Signature spotlight (flipped) -->
+      <article class="signature signature--flip reveal">
+        <figure class="signature__media media">
+          <img src="https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=1300&q=80" alt="Seared scallops with herb oil" />
+        </figure>
+        <div class="signature__body">
+          <p class="eyebrow eyebrow--gold">Signature</p>
+          <h3>Seared Scallops</h3>
+          <p>Caramelised scallops over citrus butter and herb oil, a bright, delicate opening to the evening.</p>
+          <p class="signature__price">320<small> / thousand VND</small></p>
+        </div>
+      </article>
+
+      <!-- Categories -->
+      <div class="menu__cats">
+        <div class="menu-cat reveal">
+          <h4 class="menu-cat__title">Starters</h4>
+          <ul class="dishes">
+            <li class="dish"><div class="dish__row"><span class="dish__name">Burrata &amp; Tomato</span><span class="dish__dots"></span><span class="dish__price">240</span></div><p class="dish__desc">basil oil, aged balsamic</p></li>
+            <li class="dish"><div class="dish__row"><span class="dish__name">Foie Gras Toast</span><span class="dish__dots"></span><span class="dish__price">360</span></div><p class="dish__desc">brioche, fig, port reduction</p></li>
+          </ul>
+        </div>
+
+        <div class="menu-cat reveal">
+          <h4 class="menu-cat__title">Main Course</h4>
+          <ul class="dishes">
+            <li class="dish"><div class="dish__row"><span class="dish__name">Han River Sea Bass</span><span class="dish__dots"></span><span class="dish__price">450</span></div><p class="dish__desc">local greens, beurre blanc</p></li>
+            <li class="dish"><div class="dish__row"><span class="dish__name">Duck Confit</span><span class="dish__dots"></span><span class="dish__price">420</span></div><p class="dish__desc">orange glaze, root vegetables</p></li>
+          </ul>
+        </div>
+
+        <div class="menu-cat reveal">
+          <h4 class="menu-cat__title">Desserts</h4>
+          <ul class="dishes">
+            <li class="dish"><div class="dish__row"><span class="dish__name">Crème Caramel</span><span class="dish__dots"></span><span class="dish__price">160</span></div><p class="dish__desc">burnt sugar, sea salt</p></li>
+            <li class="dish"><div class="dish__row"><span class="dish__name">Dark Chocolate Fondant</span><span class="dish__dots"></span><span class="dish__price">180</span></div><p class="dish__desc">vanilla cream, berries</p></li>
+          </ul>
+        </div>
+
+        <div class="menu-cat reveal">
+          <h4 class="menu-cat__title">Drinks &amp; Wine</h4>
+          <ul class="dishes">
+            <li class="dish"><div class="dish__row"><span class="dish__name">House Red, by the glass</span><span class="dish__dots"></span><span class="dish__price">180</span></div><p class="dish__desc">smooth, candlelight favourite</p></li>
+            <li class="dish"><div class="dish__row"><span class="dish__name">Candlelight Set for Two</span><span class="dish__dots"></span><span class="dish__price">1.200</span></div><p class="dish__desc">five courses, a glass of wine each</p></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="menu__foot reveal">
+        <p class="menu__note">Prices in thousand VND · à la carte &amp; full wine list available in-house.</p>
+        <a href="#" class="btn btn--copper">View Full Menu</a>
+      </div>
+    </section>
+
+    <!-- CTA band -->
+    <section class="cta-band">
+      <div class="cta-band__inner reveal">
+        <p class="eyebrow eyebrow--gold">A Taste of Romance</p>
+        <h2 class="display">Make your moments<br /><em>something special.</em></h2>
+        <div class="cta-band__actions">
+          <a href="#reservation" class="btn btn--copper">Book a Table</a>
+          <a href="#menu" class="btn btn--line">Explore Menu</a>
+        </div>
       </div>
     </section>
 

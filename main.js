@@ -21,7 +21,11 @@
   /* ---------- Preloader ---------- */
   window.addEventListener("load", function () {
     var pre = document.getElementById("preloader");
-    if (pre) setTimeout(function () { pre.classList.add("is-done"); }, 600);
+    if (!pre) return;
+    // Let the champagne line finish its sweep before fading into the hero.
+    var elapsed = (window.performance && performance.now) ? performance.now() : 0;
+    var wait = Math.max(700, 2600 - elapsed);
+    setTimeout(function () { pre.classList.add("is-done"); }, wait);
   });
 
   /* ---------- Header scroll state ---------- */
