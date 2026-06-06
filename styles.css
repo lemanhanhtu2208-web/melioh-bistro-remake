@@ -115,7 +115,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 /* Shared media wrapper (overflow + hover zoom) */
 .media { overflow: hidden; border-radius: 3px; }
-.media img { transition: transform 1s var(--ease); }
+.media img { transition: transform 1s var(--ease); will-change: transform; }
 .media:hover img { transform: scale(1.05); }
 
 /* ---------- Preloader ---------- */
@@ -137,14 +137,14 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     radial-gradient(120% 90% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
   animation: candle 4.5s var(--ease) infinite alternate;
 }
-/* very subtle grain/noise so the background never reads flat */
+/* very subtle grain so the dark background never reads flat */
 .preloader::after {
   content: ""; position: absolute; inset: 0; pointer-events: none;
   opacity: 0.05; mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 .preloader.is-done { opacity: 0; visibility: hidden; }
-.preloader__inner { text-align: center; }
+.preloader__inner { position: relative; z-index: 1; text-align: center; }
 .preloader__name {
   display: block; font-family: var(--serif); font-style: italic;
   font-size: clamp(2rem, 6vw, 3.2rem); letter-spacing: 0.02em; color: var(--text);
@@ -157,13 +157,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .preloader__sub {
   font-size: 0.7rem; letter-spacing: 0.34em; text-transform: uppercase; color: var(--gold);
 }
-@keyframes nameIn { to { opacity: 1; transform: translateY(0); } }
-@keyframes subIn { to { opacity: 0.85; } }
 @keyframes line { to { width: 180px; } }
-@keyframes candle {
-  0% { opacity: 0.85; }
-  100% { opacity: 1; }
-}
+@keyframes candle { 0% { opacity: 0.85; } 100% { opacity: 1; } }
 
 /* ---------- Header ---------- */
 .header {
@@ -288,7 +283,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   font-family: var(--serif); font-style: italic; font-size: 1.4rem; color: var(--gold);
   display: block; margin-bottom: 0.5rem;
 }
-.exp__item-body h3 {
+.exp__text h3 {
   font-family: var(--serif); font-weight: 500; font-size: clamp(1.8rem, 3.5vw, 2.6rem);
   color: var(--text); line-height: 1.1; margin-bottom: 0.9rem;
 }
@@ -452,86 +447,13 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
    Motion — content visible by default; .js enhances it.
    ============================================================ */
 .reveal { opacity: 1; }
-.media img { will-change: transform; }
 
 html.js .reveal {
   opacity: 0; transform: translateY(26px);
   transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
 }
 html.js .reveal.is-in { opacity: 1; transform: none; }
-
-/* Hero entrance (only when JS enabled) */
 html.js .hero__content.reveal { transition-delay: 0.15s; }
-
-/* ============================================================
-   GSAP cinematic motion
-   When GSAP is active, JS controls the timing. We only set the
-   *initial* hidden states here so there is no flash before the
-   scripts run, then GSAP animates to the natural state.
-   ============================================================ */
-
-/* Hero entrance — initial states (GSAP only) */
-.has-gsap .hero__eyebrow,
-.has-gsap .hero__sub,
-.has-gsap .hero__actions,
-.has-gsap .hero__foot { opacity: 0; }
-.has-gsap .hero__line > span { transform: translateY(110%); }
-.has-gsap .hero__media img { transform: scale(1.08); }
-.has-gsap .header { opacity: 0; }
-
-/* Generic reveals are handled by GSAP, so neutralise the CSS reveal
-   transition to avoid double-animating. JS sets the hidden state. */
-.has-gsap .reveal { transition: none; }
-
-/* Clip-path image wipe (champagne-soft, left to right) */
-.has-gsap [data-img-wipe] { clip-path: inset(0 100% 0 0); }
-
-/* Proposal packages — premium hover interaction */
-.pkg {
-  position: relative;
-  transition: background-color 0.5s var(--ease), box-shadow 0.5s var(--ease);
-}
-.pkg::after {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  border: 1px solid transparent; border-radius: 2px;
-  transition: border-color 0.5s var(--ease), box-shadow 0.5s var(--ease);
-}
-.pkg:hover {
-  background: rgba(248, 239, 227, 0.06);
-  z-index: 2;
-}
-.pkg:hover::after {
-  border-color: rgba(200, 161, 90, 0.55);
-  box-shadow: 0 0 28px rgba(200, 161, 90, 0.16), inset 0 0 22px rgba(200, 161, 90, 0.06);
-}
-.pkg h3, .pkg__desc { transition: color 0.5s var(--ease); }
-.pkg:hover h3 { color: #fff; }
-.pkg:hover .pkg__desc { color: rgba(248, 239, 227, 0.95); }
-
-/* Reservation — invitation card glow */
-.reservation .form {
-  position: relative;
-  border-radius: 2px;
-}
-.reservation .form::before {
-  content: ""; position: absolute; inset: -8% -4%; z-index: -1; pointer-events: none;
-  background: radial-gradient(60% 50% at 50% 0%, rgba(200, 161, 90, 0.14), transparent 70%);
-  opacity: 0; transition: opacity 1s var(--ease);
-}
-.reservation .form.is-in::before,
-.has-gsap .reservation .form.is-shown::before { opacity: 1; }
-
-/* Form success state — soft, in-card confirmation (no raw alert) */
-.form__status { margin-top: 1rem; font-size: 0.88rem; min-height: 1.2rem; }
-.form__status.is-ok {
-  color: var(--rose);
-  font-family: var(--serif); font-style: italic; font-size: 1.15rem; line-height: 1.4;
-  padding: 1rem 1.2rem; margin-top: 1.2rem;
-  background: rgba(200, 161, 90, 0.09);
-  border: 1px solid rgba(200, 161, 90, 0.3); border-radius: 2px;
-  animation: statusIn 0.7s var(--ease) both;
-}
-@keyframes statusIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 
 /* ============================================================
    Responsive
