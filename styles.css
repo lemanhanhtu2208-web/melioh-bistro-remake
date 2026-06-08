@@ -432,6 +432,26 @@ html:not(.js) .preloader { opacity: 0; visibility: hidden; pointer-events: none;
 }
 .menu__note { font-size: 0.82rem; color: var(--text-dim); max-width: 32rem; }
 
+/* Set-menu cards (real MeliOh menus) */
+.menu__intro { max-width: 44rem; color: var(--text-dim); margin-bottom: clamp(2rem, 4vw, 3rem); }
+.menu__sets { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.2rem, 2.6vw, 2rem); }
+.menu-set {
+  position: relative; overflow: hidden; border: 1px solid var(--line);
+  border-radius: 3px; background: var(--card);
+}
+.menu-set img { width: 100%; height: auto; display: block; transition: transform 1s var(--ease); }
+.menu-set:hover img { transform: scale(1.03); }
+.menu-set figcaption {
+  position: absolute; left: 0; right: 0; bottom: 0; padding: 1.3rem 1rem 0.9rem;
+  font-family: var(--sans); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text);
+  background: linear-gradient(180deg, transparent, rgba(15,11,8,0.88));
+  opacity: 0; transform: translateY(8px); transition: 0.4s var(--ease);
+}
+.menu-set:hover figcaption { opacity: 1; transform: none; }
+@media (max-width: 760px) {
+  .menu__sets { grid-template-columns: 1fr; max-width: 30rem; margin: 0 auto; }
+}
+
 /* ---------- CTA band ---------- */
 .cta-band {
   position: relative; text-align: center; overflow: hidden;
