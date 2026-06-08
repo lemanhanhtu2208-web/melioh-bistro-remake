@@ -119,47 +119,56 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .media img { transition: transform 1s var(--ease); will-change: transform; }
 .media:hover img { transform: scale(1.05); }
 
-/* ---------- Preloader (branded loading screen image) ---------- */
+/* ---------- Preloader (fine dining intro) ---------- */
 .preloader {
   position: fixed; inset: 0; z-index: 9999; overflow: hidden;
   display: grid; place-items: center;
   background: #0F0B08;
   transition: opacity 0.8s var(--ease), visibility 0.8s;
 }
-/* frame matches the poster's exact aspect ratio (1672 x 941) so the
-   whole image always fits AND overlay coordinates stay aligned to it */
-.preloader__frame {
-  position: relative;
-  width: min(100vw, calc(100vh * 1.7768));
-  height: min(100vh, calc(100vw / 1.7768));
-  opacity: 0; animation: plImg 1.1s var(--ease) 0.05s forwards;
+.preloader__img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  opacity: 0; animation: plImg 1.5s var(--ease) 0.05s forwards;
 }
-.preloader__img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-/* animated champagne pill placed exactly over the baked-in loading bar */
-.preloader__bar {
-  position: absolute;
-  left: 50%; top: 83.3%; transform: translate(-50%, -50%);
-  width: 40.5%; height: 2.7%;
-  background: #130D09;
-  border: 1px solid rgba(201, 154, 85, 0.5);
-  border-radius: 999px; overflow: hidden;
+/* soft dark overlay + corner vignette so the text reads cleanly */
+.preloader::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 50% 44%, transparent 40%, rgba(15,11,8,0.86) 100%),
+    linear-gradient(180deg, rgba(15,11,8,0.50) 0%, rgba(15,11,8,0.30) 45%, rgba(15,11,8,0.70) 100%);
 }
-.preloader__bar span {
-  position: absolute; top: 0; left: 0; height: 100%; width: 42%;
-  background: linear-gradient(90deg, transparent, var(--copper) 30%, var(--gold) 65%, transparent);
-  box-shadow: 0 0 12px rgba(201, 154, 85, 0.55);
-  animation: plSweep 1.4s ease-in-out infinite;
+.preloader__inner { position: relative; z-index: 2; text-align: center; padding: 0 1.5rem; }
+.preloader__logo {
+  width: clamp(62px, 9vw, 80px); height: auto; border-radius: 50%; display: block;
+  margin: 0 auto 1.6rem; background: #160f0a;
+  box-shadow: 0 0 0 1px var(--line), 0 14px 32px rgba(0,0,0,0.5);
+  animation: plFade 1s var(--ease) 0.15s both;
+}
+.preloader__name {
+  font-family: var(--serif); font-weight: 500; text-transform: uppercase;
+  font-size: clamp(1.4rem, 4.6vw, 2.6rem); letter-spacing: 0.16em; color: #F5EDE3;
+  text-shadow: 0 2px 26px rgba(0,0,0,0.55);
+  animation: plUp 1s var(--ease) 0.35s both;
+}
+.preloader__sub {
+  display: block; margin-top: 0.95rem;
+  font-size: 0.66rem; letter-spacing: 0.34em; text-transform: uppercase; color: var(--gold);
+  animation: plFade 1s var(--ease) 0.7s both;
+}
+.preloader__hint {
+  display: block; margin-top: 1.6rem;
+  font-size: 0.62rem; letter-spacing: 0.4em; text-transform: uppercase; color: rgba(246,239,231,0.72);
+  animation: plShimmer 2.6s ease-in-out 1s infinite;
 }
 /* dismiss: by JS (is-done) or, if JS never runs, automatically */
 .preloader.is-done,
 html:not(.js) .preloader { opacity: 0; visibility: hidden; pointer-events: none; }
 
-@keyframes plImg { from { opacity: 0; transform: scale(1.03); } to { opacity: 1; transform: scale(1); } }
-@keyframes plSweep {
-  0% { transform: translateX(-115%); }
-  100% { transform: translateX(255%); }
-}
+@keyframes plImg { from { opacity: 0; transform: scale(1.04); } to { opacity: 1; transform: scale(1); } }
+@keyframes plFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes plUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes plShimmer { 0%, 100% { opacity: 0.45; } 50% { opacity: 0.9; } }
 
 /* ---------- Header ---------- */
 .header {
