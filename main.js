@@ -124,6 +124,7 @@
 
       if (notConfigured) {
         setTimeout(function () {
+          saveReservationLocally(form);
           setStatus("Thank you. This is a concept demo — connect a Formspree ID to receive live requests. We would reply to confirm your evening.", "ok");
           form.reset();
         }, 700);
@@ -136,6 +137,7 @@
         headers: { Accept: "application/json" }
       }).then(function (res) {
         if (res.ok) {
+          saveReservationLocally(form);
           setStatus("Thank you. We have received your request and will reply soon to confirm the details.", "ok");
           form.reset();
         } else {
@@ -152,6 +154,29 @@
         if (f) f.classList.remove("is-invalid");
       });
     });
+  }
+
+  /* ---------- Save reservation to localStorage (for admin panel) ---------- */
+  function saveReservationLocally(formEl) {
+    try {
+      var data = new FormData(formEl);
+      var r = {
+        id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+        name: data.get("name") || "",
+        phone: data.get("phone") || "",
+        date: data.get("date") || "",
+        time: data.get("time") || "",
+        guests: data.get("guests") || "",
+        occasion: data.get("occasion") || "",
+        message: data.get("message") || "",
+        status: "pending",
+        source: "website",
+        receivedAt: new Date().toISOString()
+      };
+      var all = JSON.parse(localStorage.getItem("melioh_reservations") || "[]");
+      all.push(r);
+      localStorage.setItem("melioh_reservations", JSON.stringify(all));
+    } catch (e) {}
   }
 
   /* ---------- Newsletter (demo) ---------- */
