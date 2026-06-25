@@ -79,7 +79,36 @@ function addBooking(b) {
   var timeColNum = HEADERS.indexOf('time') + 1;
   sheet.getRange(newRowNum, dateColNum).setNumberFormat('@');
   sheet.getRange(newRowNum, timeColNum).setNumberFormat('@');
+  notifyNewBooking(b);
   return json({ ok: true, id: id });
+}
+
+// Email the restaurant when a new booking arrives. The recipient address is
+// read from Script Properties ('NOTIFY_EMAIL'); if unset, no email is sent
+// (the booking is still saved). Errors here never break the booking flow.
+function notifyNewBooking(b) {
+  try {
+    var to = PropertiesService.getScriptProperties().getProperty('NOTIFY_EMAIL');
+    if (!to) return;
+    var subject = '🍽 Đặt bàn mới: ' + str(b.name) + ' — ' + str(b.date) + ' ' + str(b.time);
+    var lines = [
+      'Có khách vừa đặt bàn qua website MeliOh Bistro:',
+      '',
+      'Tên:       ' + str(b.name),
+      'SĐT:       ' + str(b.phone),
+      'Ngày:      ' + str(b.date),
+      'Giờ:       ' + str(b.time),
+      'Số khách:  ' + str(b.guests),
+      'Dịp:       ' + (str(b.occasion) || '—'),
+      'Lời nhắn:  ' + (str(b.message) || '—'),
+      '',
+      'Mở trang quản trị để xác nhận booking này.'
+    ];
+    MailApp.sendEmail(to, subject, lines.join('\n'));
+  } catch (err) {
+    // Logging only — a failed email must not fail the booking save.
+    Logger.log('notifyNewBooking error: ' + err);
+  }
 }
 
 function cap(v, n) { return str(v).slice(0, n); }
@@ -177,4 +206,14 @@ function setAdminPassword() {
   PropertiesService.getScriptProperties()
     .setProperty('ADMIN_PASSWORD', 'CHANGE_ME_to_a_strong_password');
   Logger.log('Admin password saved to Script Properties.');
+}
+
+/* ------------------------------------------------------------------ */
+/* Run ONCE to set the email that receives new-booking notifications.  */
+/* Edit the value, then Run -> setNotifyEmail. Leave unset to disable. */
+/* ------------------------------------------------------------------ */
+function setNotifyEmail() {
+  PropertiesService.getScriptProperties()
+    .setProperty('NOTIFY_EMAIL', 'your-email@gmail.com');
+  Logger.log('Notification email saved to Script Properties.');
 }
