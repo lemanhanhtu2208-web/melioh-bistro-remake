@@ -15,7 +15,7 @@
    checked server-side. This file is safe to be public. */
 window.MELIOH_CONFIG = {
   // Paste your Google Apps Script Web App URL here (…/exec). Leave "" for demo mode.
-  endpoint: "",
+  endpoint: "https://script.google.com/macros/s/AKfycbwNnBbWydmnyS5CUV-506OvdyiYsMMyzOADUV_CBglAn3o1U5FfnHqOkQbb3Pkil5J_/exec",
 
   // Restaurant phone shown in error messages.
   phone: "+84 0918 204 008"
