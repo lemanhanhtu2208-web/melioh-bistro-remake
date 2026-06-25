@@ -73,6 +73,12 @@ function addBooking(b) {
     cap(b.receivedAt, 40) || new Date().toISOString()
   ];
   sheet.appendRow(row);
+  // Force date and time cells to plain text so Sheets never auto-converts them.
+  var newRowNum = sheet.getLastRow();
+  var dateColNum = HEADERS.indexOf('date') + 1;
+  var timeColNum = HEADERS.indexOf('time') + 1;
+  sheet.getRange(newRowNum, dateColNum).setNumberFormat('@');
+  sheet.getRange(newRowNum, timeColNum).setNumberFormat('@');
   return json({ ok: true, id: id });
 }
 
@@ -108,7 +114,10 @@ function deleteBooking(id) {
 function readAll() {
   var sheet = getSheet();
   var data = sheet.getDataRange().getValues();
-  var tz = 'Asia/Ho_Chi_Minh';
+  // Use the spreadsheet's own timezone for date/time columns so that values
+  // Sheets auto-converted to Date objects are formatted back without any offset shift.
+  var sheetTz = SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone();
+  var vnTz = 'Asia/Ho_Chi_Minh';
   var out = [];
   for (var i = 1; i < data.length; i++) {
     var obj = {};
@@ -117,11 +126,11 @@ function readAll() {
       var col = HEADERS[c];
       if (val instanceof Date) {
         if (col === 'date') {
-          val = Utilities.formatDate(val, tz, 'yyyy-MM-dd');
+          val = Utilities.formatDate(val, sheetTz, 'yyyy-MM-dd');
         } else if (col === 'time') {
-          val = Utilities.formatDate(val, tz, 'HH:mm');
+          val = Utilities.formatDate(val, sheetTz, 'HH:mm');
         } else if (col === 'receivedAt') {
-          val = Utilities.formatDate(val, tz, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+          val = Utilities.formatDate(val, vnTz, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         } else {
           val = String(val);
         }
