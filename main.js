@@ -88,7 +88,15 @@
     });
   });
 
-  /* ---------- Reservation form (Formspree) ---------- */
+  /* ---------- Reservation form ----------
+     Sends the booking to the Google Apps Script backend (config.js →
+     MELIOH_CONFIG.endpoint) so the admin sees it from any device.
+     A copy is always mirrored to localStorage as an offline backup.
+     If no endpoint is configured, the site runs in local demo mode. */
+  var CFG = window.MELIOH_CONFIG || {};
+  var ENDPOINT = CFG.endpoint || "";
+  var PHONE = CFG.phone || "+84 0918 204 008";
+
   var form = document.getElementById("reservationForm");
   var statusEl = document.getElementById("formStatus");
 
@@ -96,6 +104,31 @@
     if (!statusEl) return;
     statusEl.textContent = msg;
     statusEl.className = "form__status" + (type ? " is-" + type : "");
+  }
+
+  function collectBooking(formEl) {
+    var data = new FormData(formEl);
+    return {
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+      name: (data.get("name") || "").trim(),
+      phone: (data.get("phone") || "").trim(),
+      date: data.get("date") || "",
+      time: data.get("time") || "",
+      guests: data.get("guests") || "",
+      occasion: data.get("occasion") || "",
+      message: (data.get("message") || "").trim(),
+      status: "pending",
+      source: "website",
+      receivedAt: new Date().toISOString()
+    };
+  }
+
+  function mirrorLocally(booking) {
+    try {
+      var all = JSON.parse(localStorage.getItem("melioh_reservations") || "[]");
+      all.push(booking);
+      localStorage.setItem("melioh_reservations", JSON.stringify(all));
+    } catch (e) {}
   }
 
   if (form) {
@@ -117,34 +150,38 @@
         return;
       }
 
-      var action = form.getAttribute("action") || "";
-      var notConfigured = action.indexOf("your-form-id") !== -1;
+      var booking = collectBooking(form);
+      mirrorLocally(booking); // offline backup / demo cache
 
       setStatus("Sending your request…", "");
 
-      if (notConfigured) {
+      // Demo mode — no backend configured yet.
+      if (!ENDPOINT) {
         setTimeout(function () {
-          saveReservationLocally(form);
-          setStatus("Thank you. This is a concept demo — connect a Formspree ID to receive live requests. We would reply to confirm your evening.", "ok");
+          setStatus("Thank you. (Demo mode — connect Google Sheets in SETUP.md to receive live bookings.) We would reply to confirm your evening.", "ok");
           form.reset();
-        }, 700);
+        }, 600);
         return;
       }
 
-      fetch(action, {
+      // Live mode — send to Google Apps Script. text/plain avoids a CORS
+      // preflight, so the request goes straight through.
+      fetch(ENDPOINT, {
         method: "POST",
-        body: new FormData(form),
-        headers: { Accept: "application/json" }
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "add", booking: booking })
       }).then(function (res) {
-        if (res.ok) {
-          saveReservationLocally(form);
+        return res.json().catch(function () { return { ok: res.ok }; });
+      }).then(function (data) {
+        if (data && data.ok) {
           setStatus("Thank you. We have received your request and will reply soon to confirm the details.", "ok");
           form.reset();
         } else {
-          setStatus("Something went wrong. Please call us at +84 0918 204 008 and we will help.", "err");
+          setStatus("Something went wrong. Please call us at " + PHONE + " and we will help.", "err");
         }
       }).catch(function () {
-        setStatus("Network issue. Please call us at +84 0918 204 008 and we will help.", "err");
+        // Network/CORS issue — the booking is still saved locally; ask them to call.
+        setStatus("Network issue saving your request online. Please call us at " + PHONE + " to confirm.", "err");
       });
     });
 
@@ -154,29 +191,6 @@
         if (f) f.classList.remove("is-invalid");
       });
     });
-  }
-
-  /* ---------- Save reservation to localStorage (for admin panel) ---------- */
-  function saveReservationLocally(formEl) {
-    try {
-      var data = new FormData(formEl);
-      var r = {
-        id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
-        name: data.get("name") || "",
-        phone: data.get("phone") || "",
-        date: data.get("date") || "",
-        time: data.get("time") || "",
-        guests: data.get("guests") || "",
-        occasion: data.get("occasion") || "",
-        message: data.get("message") || "",
-        status: "pending",
-        source: "website",
-        receivedAt: new Date().toISOString()
-      };
-      var all = JSON.parse(localStorage.getItem("melioh_reservations") || "[]");
-      all.push(r);
-      localStorage.setItem("melioh_reservations", JSON.stringify(all));
-    } catch (e) {}
   }
 
   /* ---------- Newsletter (demo) ---------- */

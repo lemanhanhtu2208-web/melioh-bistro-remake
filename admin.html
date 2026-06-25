@@ -277,7 +277,7 @@
     <input type="password" id="pwd-input" placeholder="Nhập mật khẩu..." autocomplete="current-password" />
     <button class="btn-login" id="login-btn">Đăng nhập</button>
     <div class="login-error" id="login-error"></div>
-    <div class="login-hint">Mặc định: <strong>melioh2024</strong> &nbsp;·&nbsp; Đổi trong Cài đặt</div>
+    <div class="login-hint" id="login-hint"></div>
   </div>
 </div>
 
@@ -436,16 +436,22 @@
           </div>
         </div>
 
-        <div class="info-box">
-          <strong>Lưu ý:</strong> Dữ liệu đặt bàn được lưu trong <strong>localStorage</strong> của trình duyệt này. Dữ liệu sẽ mất nếu xóa bộ nhớ trình duyệt. Để nhận đặt bàn thực tế qua email, hãy kết nối <strong>Formspree</strong> trong phần cài đặt bên dưới.
-        </div>
+        <div class="info-box" id="backend-status">—</div>
 
-        <div class="settings-section">
+        <div class="settings-section" id="sec-security">
           <h3>Bảo mật</h3>
-          <div class="settings-row">
+          <div class="settings-row" id="row-pwd-live" style="display:none;">
             <div>
               <label>Mật khẩu Admin</label>
-              <small>Dùng để đăng nhập trang này</small>
+              <small>Đang chạy chế độ thật. Mật khẩu được lưu an toàn trên máy chủ
+              (Google Apps Script · Script Properties), không nằm trong mã website.
+              Để đổi: chạy lại <code>setAdminPassword()</code> theo hướng dẫn SETUP.md.</small>
+            </div>
+          </div>
+          <div class="settings-row" id="row-pwd-demo">
+            <div>
+              <label>Mật khẩu Admin (demo)</label>
+              <small>Chỉ dùng cho chế độ demo trên máy này</small>
             </div>
             <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;">
               <input type="password" id="new-pwd" placeholder="Mật khẩu mới" />
@@ -455,26 +461,26 @@
         </div>
 
         <div class="settings-section">
-          <h3>Formspree Integration</h3>
-          <div class="settings-row">
-            <div>
-              <label>Formspree Form ID</label>
-              <small>Dán Form ID từ formspree.io vào đây để nhận email đặt bàn</small>
-            </div>
-            <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;">
-              <input type="text" id="formspree-id" placeholder="xxxxxxxx" />
-              <button class="btn-sm btn-gold" id="save-formspree">Lưu</button>
-            </div>
-          </div>
-          <div class="settings-row" style="border:none;padding-top:.5rem;padding-bottom:0;">
-            <small style="color:var(--muted);font-size:.75rem;">
-              Đăng ký miễn phí tại <strong style="color:var(--gold)">formspree.io</strong> → tạo form → copy Form ID → dán vào đây và cập nhật <code>action="https://formspree.io/f/FORM-ID"</code> trong index.html.
+          <h3>Kết nối dữ liệu (Google Sheets)</h3>
+          <div class="settings-row" style="border:none;padding-bottom:0;">
+            <small style="color:var(--muted);font-size:.78rem;line-height:1.6;">
+              Đặt bàn của khách được lưu vào <strong style="color:var(--gold)">Google Sheets</strong>
+              qua Google Apps Script, nên admin xem được từ mọi thiết bị. Cấu hình URL
+              máy chủ trong file <code>config.js</code>. Hướng dẫn từng bước có trong
+              <strong style="color:var(--gold)">SETUP.md</strong>.
             </small>
           </div>
         </div>
 
         <div class="settings-section">
           <h3>Dữ liệu</h3>
+          <div class="settings-row">
+            <div>
+              <label>Làm mới dữ liệu</label>
+              <small>Tải lại danh sách đặt bàn mới nhất từ máy chủ</small>
+            </div>
+            <button class="btn-sm btn-outline" id="btn-refresh">↻ Làm mới</button>
+          </div>
           <div class="settings-row">
             <div>
               <label>Thêm đặt bàn thủ công</label>
@@ -484,10 +490,10 @@
           </div>
           <div class="settings-row">
             <div>
-              <label>Xóa toàn bộ dữ liệu</label>
-              <small>Xóa tất cả đặt bàn khỏi localStorage</small>
+              <label>Xóa bộ nhớ đệm cục bộ</label>
+              <small id="clear-hint">Xóa bản sao lưu tạm trong trình duyệt này</small>
             </div>
-            <button class="btn-sm btn-danger" id="btn-clear-settings">Xóa dữ liệu</button>
+            <button class="btn-sm btn-danger" id="btn-clear-settings">Xóa cache</button>
           </div>
         </div>
       </div>
@@ -563,24 +569,93 @@
 <!-- Toast -->
 <div id="toast"></div>
 
+<script src="config.js"></script>
 <script>
 (function () {
   'use strict';
 
   var STORAGE_KEY = 'melioh_reservations';
-  var PWD_KEY     = 'melioh_admin_pwd';
-  var FS_KEY      = 'melioh_formspree_id';
-  var SESSION_KEY = 'melioh_admin_session';
+  var PWD_KEY     = 'melioh_admin_pwd';      // demo-mode only
+  var SESSION_KEY = 'melioh_admin_session';  // demo-mode flag
+  var SESSION_PWD = 'melioh_admin_skey';     // live-mode session key (sessionStorage)
 
-  var DEFAULT_PWD = 'melioh2024';
+  var DEFAULT_PWD = 'melioh2024';            // demo-mode password only
+
+  var CFG = window.MELIOH_CONFIG || {};
+  var ENDPOINT = CFG.endpoint || '';
+  var LIVE = !!ENDPOINT;                      // true = real backend (Google Sheets)
+
+  // In-memory list. In live mode this is the Sheet's data; in demo mode it
+  // mirrors localStorage. All renders read from here.
+  var BOOKINGS = [];
+  var SKEY = '';                             // validated admin key for live calls
 
   /* ---- helpers ---- */
-  function getReservations() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) { return []; }
+  function getReservations() { return BOOKINGS.slice(); }
+
+  // Load list from the source of truth. Returns a Promise.
+  function loadBookings() {
+    if (!LIVE) {
+      try { BOOKINGS = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+      catch (e) { BOOKINGS = []; }
+      return Promise.resolve(BOOKINGS);
+    }
+    return fetch(ENDPOINT + '?action=list&key=' + encodeURIComponent(SKEY))
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data && data.ok) {
+          BOOKINGS = (data.bookings || []).map(normalize);
+          // keep an offline cache so the panel still shows something offline
+          try { localStorage.setItem(STORAGE_KEY, JSON.stringify(BOOKINGS)); } catch (e) {}
+        }
+        return BOOKINGS;
+      });
   }
-  function saveReservations(arr) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+
+  // Sheets returns numbers/dates as native types — coerce to the shapes the UI expects.
+  function normalize(r) {
+    return {
+      id: String(r.id || ''),
+      name: r.name || '', phone: String(r.phone || ''),
+      date: typeof r.date === 'string' ? r.date : fmtISODate(r.date),
+      time: typeof r.time === 'string' ? r.time : fmtClock(r.time),
+      guests: r.guests || '', occasion: r.occasion || '', message: r.message || '',
+      status: r.status || 'pending', source: r.source || 'website',
+      receivedAt: r.receivedAt || ''
+    };
   }
+  function fmtISODate(v) {
+    try { var d = new Date(v); return d.toISOString().slice(0, 10); } catch (e) { return String(v || ''); }
+  }
+  function fmtClock(v) {
+    try { var d = new Date(v); return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2); }
+    catch (e) { return String(v || ''); }
+  }
+
+  // Persist to the source of truth. action: 'add' | 'update' | 'delete'.
+  // Returns a Promise resolving to the server result (or local success).
+  function mutate(action, payload) {
+    if (!LIVE) {
+      var all;
+      try { all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch (e) { all = []; }
+      if (action === 'add') all.push(payload.booking);
+      if (action === 'update') all.forEach(function (r) { if (r.id === payload.id) r.status = payload.status; });
+      if (action === 'delete') all = all.filter(function (r) { return r.id !== payload.id; });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+      BOOKINGS = all;
+      return Promise.resolve({ ok: true });
+    }
+    var body = { action: action, key: SKEY };
+    if (action === 'add') body.booking = payload.booking;
+    if (action === 'update') { body.id = payload.id; body.status = payload.status; }
+    if (action === 'delete') body.id = payload.id;
+    return fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(body)
+    }).then(function (r) { return r.json(); });
+  }
+
   function getPwd() { return localStorage.getItem(PWD_KEY) || DEFAULT_PWD; }
   function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
   function todayStr() { return new Date().toISOString().slice(0,10); }
@@ -615,38 +690,81 @@
   var loginScreen = document.getElementById('login-screen');
   var app = document.getElementById('app');
 
-  function checkSession() {
-    return sessionStorage.getItem(SESSION_KEY) === '1';
-  }
-  function startSession() {
-    sessionStorage.setItem(SESSION_KEY, '1');
+  function enterApp() {
     loginScreen.style.display = 'none';
     app.style.display = 'block';
-    renderAll();
+    loadBookings()
+      .then(function () { renderAll(); })
+      .catch(function () { renderAll(); toast('Không tải được dữ liệu từ máy chủ'); });
   }
   function logout() {
     sessionStorage.removeItem(SESSION_KEY);
+    sessionStorage.removeItem(SESSION_PWD);
     location.reload();
   }
 
-  if (checkSession()) {
-    loginScreen.style.display = 'none';
-    app.style.display = 'block';
-    renderAll();
+  // Restore an existing session on reload.
+  if (LIVE) {
+    var savedKey = sessionStorage.getItem(SESSION_PWD);
+    if (savedKey) { SKEY = savedKey; enterApp(); }
+  } else if (sessionStorage.getItem(SESSION_KEY) === '1') {
+    enterApp();
   }
 
   var pwdInput = document.getElementById('pwd-input');
   var loginBtn = document.getElementById('login-btn');
   var loginError = document.getElementById('login-error');
 
-  function tryLogin() {
-    if (pwdInput.value === getPwd()) {
-      loginError.textContent = '';
-      startSession();
+  // Login hint reflects the mode.
+  (function () {
+    var hint = document.getElementById('login-hint');
+    if (LIVE) {
+      hint.innerHTML = 'Mật khẩu được kiểm tra bởi máy chủ.';
     } else {
-      loginError.textContent = 'Mật khẩu không đúng.';
-      pwdInput.select();
+      hint.innerHTML = 'Demo · mặc định <strong>melioh2024</strong> &nbsp;·&nbsp; kết nối Google Sheets theo SETUP.md';
     }
+  })();
+
+  function tryLogin() {
+    var entered = pwdInput.value;
+    loginError.textContent = '';
+
+    if (!LIVE) {
+      // Demo mode — local password only.
+      if (entered === getPwd()) {
+        sessionStorage.setItem(SESSION_KEY, '1');
+        enterApp();
+      } else {
+        loginError.textContent = 'Mật khẩu không đúng.';
+        pwdInput.select();
+      }
+      return;
+    }
+
+    // Live mode — the password is validated by the server (Apps Script).
+    loginBtn.disabled = true;
+    loginError.textContent = 'Đang kiểm tra…';
+    fetch(ENDPOINT + '?action=list&key=' + encodeURIComponent(entered))
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        loginBtn.disabled = false;
+        if (data && data.ok) {
+          SKEY = entered;
+          sessionStorage.setItem(SESSION_PWD, entered);
+          loginError.textContent = '';
+          BOOKINGS = (data.bookings || []).map(normalize);
+          loginScreen.style.display = 'none';
+          app.style.display = 'block';
+          renderAll();
+        } else {
+          loginError.textContent = 'Mật khẩu không đúng.';
+          pwdInput.select();
+        }
+      })
+      .catch(function () {
+        loginBtn.disabled = false;
+        loginError.textContent = 'Không kết nối được máy chủ. Kiểm tra URL trong config.js.';
+      });
   }
   loginBtn.addEventListener('click', tryLogin);
   pwdInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') tryLogin(); });
@@ -787,8 +905,18 @@
 
   /* ---- SETTINGS PAGE ---- */
   function renderSettings() {
-    var fsId = localStorage.getItem(FS_KEY) || '';
-    document.getElementById('formspree-id').value = fsId;
+    var box = document.getElementById('backend-status');
+    if (LIVE) {
+      box.innerHTML = '<strong>✓ Đã kết nối máy chủ.</strong> Đặt bàn được lưu vào Google Sheets — admin xem được từ mọi thiết bị. Mật khẩu admin do máy chủ kiểm tra.';
+      document.getElementById('row-pwd-live').style.display = '';
+      document.getElementById('row-pwd-demo').style.display = 'none';
+      document.getElementById('clear-hint').textContent = 'Xóa bản sao lưu tạm trong trình duyệt này (không ảnh hưởng dữ liệu trên Google Sheets)';
+    } else {
+      box.innerHTML = '<strong>Chế độ demo.</strong> Chưa cấu hình máy chủ — dữ liệu chỉ lưu trên trình duyệt này (localStorage), không xem được từ thiết bị khác. Làm theo <strong>SETUP.md</strong> để kết nối Google Sheets.';
+      document.getElementById('row-pwd-live').style.display = 'none';
+      document.getElementById('row-pwd-demo').style.display = '';
+      document.getElementById('clear-hint').textContent = 'Xóa tất cả đặt bàn khỏi localStorage';
+    }
   }
 
   document.getElementById('save-pwd').addEventListener('click', function() {
@@ -796,18 +924,25 @@
     if (v.length < 4) { toast('Mật khẩu tối thiểu 4 ký tự'); return; }
     localStorage.setItem(PWD_KEY, v);
     document.getElementById('new-pwd').value = '';
-    toast('Đã lưu mật khẩu mới');
+    toast('Đã lưu mật khẩu mới (demo)');
   });
 
-  document.getElementById('save-formspree').addEventListener('click', function() {
-    var v = document.getElementById('formspree-id').value.trim();
-    localStorage.setItem(FS_KEY, v);
-    toast('Đã lưu Formspree ID: ' + v);
+  document.getElementById('btn-refresh').addEventListener('click', function() {
+    loadBookings().then(function() { renderAll(); toast('Đã làm mới dữ liệu'); })
+      .catch(function() { toast('Không tải được dữ liệu'); });
   });
 
   document.getElementById('btn-clear-settings').addEventListener('click', function() {
+    if (LIVE) {
+      if (confirm('Xóa bộ nhớ đệm cục bộ? Dữ liệu thật trên Google Sheets KHÔNG bị ảnh hưởng.')) {
+        localStorage.removeItem(STORAGE_KEY);
+        toast('Đã xóa cache cục bộ');
+      }
+      return;
+    }
     if (confirm('Xóa toàn bộ dữ liệu đặt bàn? Hành động này không thể hoàn tác.')) {
       localStorage.removeItem(STORAGE_KEY);
+      BOOKINGS = [];
       renderAll();
       toast('Đã xóa toàn bộ dữ liệu');
     }
@@ -829,8 +964,13 @@
 
   /* ---- CLEAR ALL ---- */
   document.getElementById('btn-clear-all').addEventListener('click', function() {
+    if (LIVE) {
+      alert('Đang chạy chế độ thật. Để tránh xóa nhầm, hãy xóa từng đặt bàn trong bảng, hoặc xóa hàng loạt trực tiếp trong Google Sheet.');
+      return;
+    }
     if (confirm('Xóa toàn bộ đặt bàn?')) {
       localStorage.removeItem(STORAGE_KEY);
+      BOOKINGS = [];
       renderReservations();
       toast('Đã xóa toàn bộ');
     }
@@ -885,15 +1025,20 @@
 
   function setModalStatus(status) {
     if (!currentModalId) return;
-    var all = getReservations();
-    var r = all.find(function(x){ return x.id === currentModalId; });
-    if (!r) return;
-    r.status = status;
-    saveReservations(all);
-    document.getElementById('m-status-badge').innerHTML = badgeHTML(status);
-    document.getElementById('m-status-note').textContent = 'Đã cập nhật: ' + statusLabel(status);
-    renderReservations();
-    toast('Đã cập nhật: ' + statusLabel(status));
+    var id = currentModalId;
+    document.getElementById('m-status-note').textContent = 'Đang lưu…';
+    mutate('update', { id: id, status: status }).then(function(res) {
+      if (!res || !res.ok) { document.getElementById('m-status-note').textContent = 'Lỗi lưu. Thử lại.'; return; }
+      // update in-memory copy
+      var r = BOOKINGS.find(function(x){ return x.id === id; });
+      if (r) r.status = status;
+      document.getElementById('m-status-badge').innerHTML = badgeHTML(status);
+      document.getElementById('m-status-note').textContent = 'Đã cập nhật: ' + statusLabel(status);
+      renderReservations();
+      toast('Đã cập nhật: ' + statusLabel(status));
+    }).catch(function() {
+      document.getElementById('m-status-note').textContent = 'Lỗi kết nối. Thử lại.';
+    });
   }
 
   document.getElementById('m-btn-confirm').addEventListener('click', function() { setModalStatus('confirmed'); });
@@ -903,11 +1048,15 @@
   document.getElementById('m-btn-delete').addEventListener('click', function() {
     if (!currentModalId) return;
     if (!confirm('Xóa đặt bàn này?')) return;
-    var all = getReservations().filter(function(x){ return x.id !== currentModalId; });
-    saveReservations(all);
-    closeModal();
-    renderReservations();
-    toast('Đã xóa đặt bàn');
+    var id = currentModalId;
+    mutate('delete', { id: id }).then(function(res) {
+      if (!res || !res.ok) { toast('Lỗi xóa. Thử lại.'); return; }
+      BOOKINGS = BOOKINGS.filter(function(x){ return x.id !== id; });
+      closeModal();
+      renderReservations();
+      renderCustomers();
+      toast('Đã xóa đặt bàn');
+    }).catch(function() { toast('Lỗi kết nối. Thử lại.'); });
   });
 
   /* ---- MANUAL ADD MODAL ---- */
@@ -950,19 +1099,28 @@
       source: 'manual',
       receivedAt: new Date().toISOString()
     };
-    var all = getReservations();
-    all.push(r);
-    saveReservations(all);
-    closeAddModal();
-    renderReservations();
-    renderCustomers();
-    toast('Đã thêm đặt bàn: ' + name);
+    var btn = document.getElementById('am-submit');
+    btn.disabled = true;
+    mutate('add', { booking: r }).then(function(res) {
+      btn.disabled = false;
+      if (!res || !res.ok) { toast('Lỗi khi thêm. Thử lại.'); return; }
+      if (LIVE) BOOKINGS.push(r); // local list already updated in demo mode
+      closeAddModal();
+      renderReservations();
+      renderCustomers();
+      toast('Đã thêm đặt bàn: ' + name);
+    }).catch(function() {
+      btn.disabled = false;
+      toast('Lỗi kết nối. Thử lại.');
+    });
   });
 
-  /* ---- Seed demo data if empty ---- */
+  /* ---- Seed demo data if empty (DEMO MODE ONLY) ---- */
   function seedDemoData() {
-    var all = getReservations();
-    if (all.length > 0) return;
+    if (LIVE) return; // never write demo rows to the real backend
+    var existing;
+    try { existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch (e) { existing = []; }
+    if (existing.length > 0) return;
     var demos = [
       { name: 'Nguyễn Anh Tuấn', phone: '0901234567', date: todayStr(), time: '19:00', guests: '2', occasion: 'Anniversary', message: 'Kỷ niệm 5 năm yêu nhau, cần setup hoa và nến.', status: 'confirmed' },
       { name: 'Trần Thị Mai', phone: '0987654321', date: todayStr(), time: '20:30', guests: '4', occasion: 'Birthday', message: 'Sinh nhật chị gái, cần bánh kem và banner nhỏ.', status: 'pending' },
@@ -976,7 +1134,7 @@
       d.source = 'website';
       d.receivedAt = new Date(ts - (i * 3600000 * 8)).toISOString();
     });
-    saveReservations(demos);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(demos));
   }
   seedDemoData();
 
