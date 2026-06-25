@@ -408,7 +408,7 @@ html:not(.js) .preloader { opacity: 0; visibility: hidden; pointer-events: none;
   padding: clamp(4rem, 9vw, 7rem) var(--gut);
   background:
     linear-gradient(rgba(15,11,8,0.74), rgba(15,11,8,0.84)),
-    url("https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=2000&q=80") center/cover no-repeat;
+    url("assets/melioh-proposal-setup.jpg") center/cover no-repeat;
   border-top: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft);
 }
 .cta-band__inner { max-width: 44rem; margin: 0 auto; }
@@ -506,14 +506,12 @@ html:not(.js) .preloader { opacity: 0; visibility: hidden; pointer-events: none;
 }
 .logo--light { color: var(--text); }
 .footer__brand p { margin-top: 1rem; font-size: 0.92rem; max-width: 24rem; }
-.footer__news { display: flex; gap: 0.6rem; margin-top: 1.6rem; max-width: 24rem; }
-.footer__news input {
-  flex: 1; font-family: var(--sans); font-size: 0.9rem; font-weight: 300;
-  background: var(--card); border: 1px solid var(--line-soft); border-radius: 2px;
-  padding: 0.8rem 1rem; color: var(--text);
+.footer__follow { display: flex; flex-wrap: wrap; align-items: center; gap: 0.7rem; margin-top: 1.6rem; }
+.footer__follow span {
+  width: 100%; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-dim); margin-bottom: 0.2rem;
 }
-.footer__news input:focus { outline: none; border-color: var(--gold); }
-.footer__news .btn { padding: 0.8em 1.2em; }
+.footer__follow .btn { padding: 0.7em 1.3em; }
 .footer__col { display: flex; flex-direction: column; gap: 0.7rem; }
 .footer__col h4 { font-family: var(--sans); font-weight: 500; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; }
 .footer__col a, .footer__col span { font-size: 0.92rem; transition: color 0.3s; }

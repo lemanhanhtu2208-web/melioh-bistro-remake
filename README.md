@@ -1,55 +1,65 @@
-# MeliOh Bistro Da Nang — Remake Concept
+# MeliOh Bistro Da Nang — Website
 
-A redesign concept for [MeliOh Bistro](https://meliohbistro.com/), a romantic
-dining destination for couples in Da Nang — *the nest of love by Han River*.
+Website chính thức cho **MeliOh Bistro Da Nang** — nhà hàng fine dining lãng mạn
+bên bờ sông Hàn. *The nest of love by Han River.*
 
-This is a portfolio design study, not the official site.
+- 🌐 **Website:** https://lemanhanhtu2208-web.github.io/melioh-bistro-remake/
+- 🔐 **Trang quản lý (admin):** https://lemanhanhtu2208-web.github.io/melioh-bistro-remake/admin.html
 
-## Direction
+---
 
-**Candlelight Editorial** — a warm, romantic dining brand treated like a print
-magazine rather than a template brochure. Warm luxury (never dark/cyber),
-editorial serif headings, generous whitespace, asymmetric layouts and image-led
-storytelling.
+## Tính năng
 
-- **Palette:** Candle Cream, Champagne, Warm Blush, Rose Brown, Deep Wine,
-  Charcoal, Soft Gold.
-- **Type:** Cormorant Garamond (headings) + Be Vietnam Pro (body).
-- **Motion:** subtle fade-in-up, light hero parallax, gentle image zoom; reduced
-  on mobile and disabled for `prefers-reduced-motion`.
+- Trang giới thiệu nhà hàng (story, trải nghiệm, proposal, menu, gallery, liên hệ, bản đồ).
+- **Hệ thống đặt bàn online** lưu vào **Google Sheets** qua Google Apps Script.
+- **Trang admin** quản lý đặt bàn: xem / lọc / tìm / đổi trạng thái / xóa / export CSV / thêm thủ công.
+- Đăng nhập admin có mật khẩu, **kiểm tra phía server** (không lưu mật khẩu trong code).
+- Responsive cho điện thoại / tablet / máy tính.
 
-## Tech
+## Công nghệ
 
-Plain HTML, CSS and JavaScript — no build step. Open `index.html` in a browser
-or serve the folder:
+HTML + CSS + JavaScript thuần, **không cần build**. Backend là Google Apps Script
+(miễn phí). Hosting trên GitHub Pages.
+
+Chạy thử ở máy:
 
 ```bash
 python3 -m http.server 8000
+# mở http://localhost:8000
 ```
 
-## Sections
+## Cấu trúc thư mục
 
-Preloader, Header, Hero, About, Experience, Services (accordion),
-Proposal Packages, Menu preview, Gallery, Reservation form, Location/Map,
-Stories, Newsletter, Footer, and a floating mobile contact dock.
+| File | Vai trò |
+|------|---------|
+| `index.html` | Trang chủ + form đặt bàn |
+| `admin.html` | Trang quản lý đặt bàn |
+| `main.js` | Logic form đặt bàn (validate, gửi backend) |
+| `config.js` | **Cấu hình** — dán URL backend vào đây |
+| `styles.css` | Toàn bộ giao diện trang chủ |
+| `apps-script/Code.gs` | Code backend dán vào Google Apps Script |
+| `assets/` | Ảnh nhà hàng |
 
-## Configuring real submissions
+## Hai chế độ hoạt động
 
-The reservation and newsletter forms run in **demo mode** until you set a real
-endpoint. Replace `your-form-id` in the `action` of `#reservationForm` and
-`#newsletterForm` in `index.html` with a [Formspree](https://formspree.io) form
-ID (or any endpoint accepting `multipart/form-data`). Validation, the honeypot
-anti-spam field and success/error states work as-is.
+1. **Demo mode** (mặc định, khi `config.js` chưa có URL): form đặt bàn **không**
+   gửi đi đâu cả — sẽ hiện thông báo mời khách gọi điện. Dùng để xem thử giao diện.
+2. **Live mode** (sau khi cấu hình theo `SETUP.md`): đặt bàn lưu vào Google Sheets,
+   admin xem được từ mọi thiết bị.
 
-## Image assets
+## Tài liệu
 
-Gallery and section images are high-quality placeholders that match the brand
-vibe (candlelight, glass dome, bridge view, proposal). Swap in MeliOh's real
-photos by replacing the `src` URLs.
+- 📦 **[SETUP.md](SETUP.md)** — Cách deploy backend Google Apps Script + Google Sheets.
+- 👤 **[ADMIN_GUIDE.md](ADMIN_GUIDE.md)** — Hướng dẫn chủ nhà hàng dùng trang admin.
+- 🤝 **[CLIENT_HANDOFF.md](CLIENT_HANDOFF.md)** — Checklist bàn giao.
+- ✅ **[TESTING.md](TESTING.md)** — Các test case đã kiểm tra.
 
-## Real brand info used
+## Thông tin nhà hàng
 
-- Address: Lot A1-04 The Villas of Green Islands, Hoa Cuong Bac, Hai Chau, Da Nang
-- Phone: +84 0918 204 008
-- Email: melioh.bistrodn@gmail.com
-- Services: Anniversary/Birthday dinner, three proposal packages, special-view party
+- **Địa chỉ:** Lot A1-04 The Villas of Green Islands, Hoa Cuong Bac, Hai Chau, Da Nang
+- **Điện thoại:** +84 0918 204 008
+- **Email:** melioh.bistrodn@gmail.com
+- **Facebook:** https://www.facebook.com/melioh.bistrodn
+- **Instagram:** https://www.instagram.com/melioh.bistrodn/
+- **Giờ mở cửa:** Hằng ngày · 16:00 – 23:00
+</content>

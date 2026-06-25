@@ -14,6 +14,7 @@
 var SHEET_NAME = 'Reservations';
 var HEADERS = ['id', 'name', 'phone', 'date', 'time', 'guests',
                'occasion', 'message', 'status', 'source', 'receivedAt'];
+var VALID_STATUSES = ['pending', 'confirmed', 'completed', 'cancelled', 'noshow'];
 
 /* ------------------------------------------------------------------ */
 /* Public endpoints                                                    */
@@ -62,19 +63,25 @@ function addBooking(b) {
   var sheet = getSheet();
   var id = (b.id) ? String(b.id)
                   : (Date.now().toString(36) + Math.floor(Math.random() * 1e6).toString(36));
+  // Clamp lengths so a malicious/buggy POST cannot bloat the sheet.
   var row = [
     id,
-    str(b.name), str(b.phone), str(b.date), str(b.time), str(b.guests),
-    str(b.occasion), str(b.message),
-    b.status || 'pending',
-    b.source || 'website',
-    b.receivedAt || new Date().toISOString()
+    cap(b.name, 120), cap(b.phone, 30), cap(b.date, 10), cap(b.time, 5), cap(b.guests, 4),
+    cap(b.occasion, 40), cap(b.message, 1000),
+    (VALID_STATUSES.indexOf(b.status) !== -1 ? b.status : 'pending'),
+    cap(b.source, 20) || 'website',
+    cap(b.receivedAt, 40) || new Date().toISOString()
   ];
   sheet.appendRow(row);
   return json({ ok: true, id: id });
 }
 
+function cap(v, n) { return str(v).slice(0, n); }
+
 function updateBooking(id, status) {
+  if (VALID_STATUSES.indexOf(status) === -1) {
+    return json({ ok: false, error: 'invalid status' });
+  }
   var sheet = getSheet();
   var data = sheet.getDataRange().getValues();
   for (var i = 1; i < data.length; i++) {

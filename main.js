@@ -1,6 +1,6 @@
 /* MeliOh Bistro Da Nang — Dark Fine Dining Editorial
    Lightweight vanilla interactions: preloader, header, mobile nav,
-   reveal-on-scroll, accordion, reservation form (Formspree).
+   reveal-on-scroll, accordion, reservation form (Google Apps Script).
    No external libraries. Content is visible by default — JS only
    enhances, so the page never blanks out if a script fails. */
 
@@ -131,41 +131,116 @@
     } catch (e) {}
   }
 
+  /* ---- Validation helpers (Vietnam timezone) ---- */
+
+  // "Now" in Asia/Ho_Chi_Minh (UTC+7), independent of the visitor's device clock.
+  function vnNow() {
+    var local = new Date();
+    var utc = local.getTime() + local.getTimezoneOffset() * 60000;
+    return new Date(utc + 7 * 3600000);
+  }
+  function vnTodayStr() {
+    var d = vnNow();
+    return d.getFullYear() + "-" +
+      ("0" + (d.getMonth() + 1)).slice(-2) + "-" +
+      ("0" + d.getDate()).slice(-2);
+  }
+
+  // Accept Vietnamese phone numbers: 0xxxxxxxxx (10 digits) or +84xxxxxxxxx.
+  function isValidVNPhone(raw) {
+    var digits = String(raw).replace(/[\s.\-()]/g, "");
+    if (/^0\d{9}$/.test(digits)) return true;            // 0918204008
+    if (/^\+?84\d{9}$/.test(digits)) return true;         // +84918204008 / 84918204008
+    return false;
+  }
+
+  // Returns an error message string, or "" if the booking date+time is valid.
+  function dateTimeError(dateStr, timeStr) {
+    if (!dateStr || !timeStr) return "";
+    var today = vnTodayStr();
+    if (dateStr < today) return "Please choose today or a future date.";
+    if (dateStr === today) {
+      var now = vnNow();
+      var parts = timeStr.split(":");
+      var bookMin = parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+      var nowMin = now.getHours() * 60 + now.getMinutes();
+      if (bookMin <= nowMin + 30) {
+        return "For tonight, please choose a time at least 30 minutes ahead — or call us.";
+      }
+    }
+    return "";
+  }
+
+  function markInvalid(input, bad) {
+    var field = input && input.closest(".field");
+    if (field) field.classList.toggle("is-invalid", bad);
+  }
+
   if (form) {
+    // Prevent picking a past date in the calendar widget itself.
+    var dateInput = form.querySelector('[name="date"]');
+    if (dateInput) dateInput.setAttribute("min", vnTodayStr());
+
     form.addEventListener("submit", function (e) {
       e.preventDefault();
 
       if (form.querySelector('[name="_gotcha"]').value) return;
 
+      // 1) Required fields present & natively valid.
       var valid = true;
       form.querySelectorAll("[required]").forEach(function (input) {
-        var field = input.closest(".field");
         var ok = input.value.trim() !== "" && input.checkValidity();
-        if (field) field.classList.toggle("is-invalid", !ok);
+        markInvalid(input, !ok);
         if (!ok) valid = false;
       });
-
       if (!valid) {
         setStatus("Please complete the highlighted fields so we can reach you.", "err");
         return;
       }
 
+      // 2) Phone format (Vietnam).
+      var phoneInput = form.querySelector('[name="phone"]');
+      if (!isValidVNPhone(phoneInput.value)) {
+        markInvalid(phoneInput, true);
+        setStatus("Please enter a valid Vietnamese phone number, e.g. 0918 204 008.", "err");
+        return;
+      }
+
+      // 3) Guests within range.
+      var guestsInput = form.querySelector('[name="guests"]');
+      var guests = parseInt(guestsInput.value, 10);
+      if (isNaN(guests) || guests < 1 || guests > 40) {
+        markInvalid(guestsInput, true);
+        setStatus("Number of guests should be between 1 and 40. For larger parties, please call us.", "err");
+        return;
+      }
+
+      // 4) Date & time not in the past (Vietnam time).
+      var dtErr = dateTimeError(form.querySelector('[name="date"]').value,
+                                form.querySelector('[name="time"]').value);
+      if (dtErr) {
+        markInvalid(form.querySelector('[name="date"]'), true);
+        markInvalid(form.querySelector('[name="time"]'), true);
+        setStatus(dtErr, "err");
+        return;
+      }
+
       var booking = collectBooking(form);
-      mirrorLocally(booking); // offline backup / demo cache
 
-      setStatus("Sending your request…", "");
-
-      // Demo mode — no backend configured yet.
+      // Demo mode — no backend yet. Be honest: the restaurant will NOT receive
+      // this. Do not claim success; tell the guest to call. Keep their input.
       if (!ENDPOINT) {
-        setTimeout(function () {
-          setStatus("Thank you. (Demo mode — connect Google Sheets in SETUP.md to receive live bookings.) We would reply to confirm your evening.", "ok");
-          form.reset();
-        }, 600);
+        mirrorLocally(booking); // local preview only
+        setStatus("⚠ Online booking is not active yet. To reserve, please call or message us at " + PHONE + ". (Your details are kept on this page so you can copy them.)", "err");
         return;
       }
 
       // Live mode — send to Google Apps Script. text/plain avoids a CORS
       // preflight, so the request goes straight through.
+      setStatus("Sending your request…", "");
+      var submitBtn = form.querySelector('[type="submit"]');
+      if (submitBtn) submitBtn.disabled = true;
+
       fetch(ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -173,40 +248,26 @@
       }).then(function (res) {
         return res.json().catch(function () { return { ok: res.ok }; });
       }).then(function (data) {
+        if (submitBtn) submitBtn.disabled = false;
         if (data && data.ok) {
-          setStatus("Thank you. We have received your request and will reply soon to confirm the details.", "ok");
+          mirrorLocally(booking); // cache only after a confirmed save
+          setStatus("Thank you, " + booking.name + "! We have received your request and will call you shortly to confirm.", "ok");
           form.reset();
+          if (dateInput) dateInput.setAttribute("min", vnTodayStr());
         } else {
-          setStatus("Something went wrong. Please call us at " + PHONE + " and we will help.", "err");
+          setStatus("We couldn't save your request. Please call us at " + PHONE + " and we'll arrange it — your details are still in the form.", "err");
         }
       }).catch(function () {
-        // Network/CORS issue — the booking is still saved locally; ask them to call.
-        setStatus("Network issue saving your request online. Please call us at " + PHONE + " to confirm.", "err");
+        if (submitBtn) submitBtn.disabled = false;
+        // Network/CORS issue — do not lose the guest's input (no reset).
+        setStatus("Network problem saving your request. Please call us at " + PHONE + " — your details are still in the form.", "err");
       });
     });
 
     form.querySelectorAll("input, select, textarea").forEach(function (el) {
       el.addEventListener("input", function () {
-        var f = el.closest(".field");
-        if (f) f.classList.remove("is-invalid");
+        markInvalid(el, false);
       });
-    });
-  }
-
-  /* ---------- Newsletter (demo) ---------- */
-  var news = document.getElementById("newsletterForm");
-  if (news) {
-    news.addEventListener("submit", function (e) {
-      var action = news.getAttribute("action") || "";
-      if (action.indexOf("your-form-id") !== -1) {
-        e.preventDefault();
-        var input = news.querySelector("input");
-        if (input.checkValidity()) {
-          news.innerHTML = '<p style="color:var(--gold);font-family:var(--serif);font-style:italic;font-size:1.15rem;">Thank you for subscribing.</p>';
-        } else {
-          input.reportValidity();
-        }
-      }
     });
   }
 })();
