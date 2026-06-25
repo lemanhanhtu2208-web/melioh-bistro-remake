@@ -108,10 +108,26 @@ function deleteBooking(id) {
 function readAll() {
   var sheet = getSheet();
   var data = sheet.getDataRange().getValues();
+  var tz = 'Asia/Ho_Chi_Minh';
   var out = [];
   for (var i = 1; i < data.length; i++) {
     var obj = {};
-    for (var c = 0; c < HEADERS.length; c++) obj[HEADERS[c]] = data[i][c];
+    for (var c = 0; c < HEADERS.length; c++) {
+      var val = data[i][c];
+      var col = HEADERS[c];
+      if (val instanceof Date) {
+        if (col === 'date') {
+          val = Utilities.formatDate(val, tz, 'yyyy-MM-dd');
+        } else if (col === 'time') {
+          val = Utilities.formatDate(val, tz, 'HH:mm');
+        } else if (col === 'receivedAt') {
+          val = Utilities.formatDate(val, tz, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        } else {
+          val = String(val);
+        }
+      }
+      obj[col] = val;
+    }
     out.push(obj);
   }
   return out;

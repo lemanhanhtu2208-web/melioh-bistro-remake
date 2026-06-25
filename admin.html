@@ -620,19 +620,47 @@
     return {
       id: String(r.id || ''),
       name: r.name || '', phone: String(r.phone || ''),
-      date: typeof r.date === 'string' ? r.date : fmtISODate(r.date),
-      time: typeof r.time === 'string' ? r.time : fmtClock(r.time),
+      date: parseDate(r.date),
+      time: parseTime(r.time),
       guests: r.guests || '', occasion: r.occasion || '', message: r.message || '',
       status: r.status || 'pending', source: r.source || 'website',
       receivedAt: r.receivedAt || ''
     };
   }
-  function fmtISODate(v) {
-    try { var d = new Date(v); return d.toISOString().slice(0, 10); } catch (e) { return String(v || ''); }
+  // Returns yyyy-mm-dd from any value Sheets/network might send.
+  function parseDate(v) {
+    if (!v) return '';
+    var s = String(v);
+    // Full ISO datetime "2026-06-26T17:00:00.000Z" — take the date part only.
+    if (/^\d{4}-\d{2}-\d{2}T/.test(s)) return s.slice(0, 10);
+    // Already plain yyyy-mm-dd.
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+    // dd/mm/yyyy → normalise to yyyy-mm-dd for consistent sorting.
+    var dmy = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    if (dmy) return dmy[3] + '-' + dmy[2] + '-' + dmy[1];
+    // Last resort — try JS Date.
+    try { var d = new Date(s); if (!isNaN(d)) return d.toISOString().slice(0, 10); } catch (e) {}
+    return s;
   }
-  function fmtClock(v) {
-    try { var d = new Date(v); return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2); }
-    catch (e) { return String(v || ''); }
+  // Returns HH:mm from any value Sheets/network might send.
+  function parseTime(v) {
+    if (!v) return '';
+    var s = String(v);
+    // Already HH:mm or H:mm.
+    if (/^\d{1,2}:\d{2}$/.test(s)) return ('0' + s.split(':')[0]).slice(-2) + ':' + s.split(':')[1];
+    // Sheets time serial arrives as ISO with 1899-12-30 date — use UTC components.
+    if (s.indexOf('T') !== -1) {
+      try {
+        var d = new Date(s);
+        if (!isNaN(d)) {
+          var useUtc = s.indexOf('1899') !== -1;
+          var hh = useUtc ? d.getUTCHours() : d.getHours();
+          var mm = useUtc ? d.getUTCMinutes() : d.getMinutes();
+          return ('0' + hh).slice(-2) + ':' + ('0' + mm).slice(-2);
+        }
+      } catch (e) {}
+    }
+    return s;
   }
 
   // Persist to the source of truth. action: 'add' | 'update' | 'delete'.
@@ -670,8 +698,15 @@
   }
   function fmtDatetime(iso) {
     if (!iso) return '—';
-    var d = new Date(iso);
-    return d.toLocaleDateString('vi-VN') + ' ' + d.toLocaleTimeString('vi-VN', {hour:'2-digit',minute:'2-digit'});
+    try {
+      var d = new Date(iso);
+      if (isNaN(d)) return String(iso);
+      var dd = ('0'+d.getDate()).slice(-2);
+      var mo = ('0'+(d.getMonth()+1)).slice(-2);
+      var hh = ('0'+d.getHours()).slice(-2);
+      var mm = ('0'+d.getMinutes()).slice(-2);
+      return dd+'/'+mo+'/'+d.getFullYear()+' '+hh+':'+mm;
+    } catch (e) { return String(iso); }
   }
   function statusLabel(s) {
     return {pending:'Chờ xác nhận', confirmed:'Đã xác nhận', completed:'Hoàn thành', cancelled:'Đã huỷ', noshow:'Không đến'}[s] || s;
